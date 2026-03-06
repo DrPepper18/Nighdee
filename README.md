@@ -1,34 +1,40 @@
 # Nighdee
 
-**ВНИМАНИЕ:** Это форк проекта, созданный для того, чтобы не засорять основной репозиторий лишними ветками. Оригинальный проект [здесь](https://github.com/BlackfireZZZ/find_a_walk).
+**NOTICE:** This is a project fork so I won't fill [original repo](https://github.com/BlackfireZZZ/find_a_walk).
 
-## Описание
-
-Nighdee — это сервис для создания сходок по интересам и присоединения к ним. Пользователи могут создавать события, указывать их тематику, место и время, а другие пользователи могут находить эти события и присоединяться к ним.
+## About
+Nighdee — web-service for creating parties and gathering people with the same interests. User can create event, name it and choose its date and time so other ones may find it and join it.
 
 ## Функционал
 ### Backend
-- Поддержка миграций базы данных
-- Покрытие unit- и integration-тестами
-- Авторизация через JWT-токены (refresh + access)
+- Database migration support
+- Unit- and integration tests coverage
+- JWT-token authentication (refresh + access)
 ### Frontend
-- Интеграция OpenStreetMap API
-- Адаптивная вёрстка под мобильные устройства
+- OpenStreetMap API integration
+- Responsive web-design for mobile devices
 ### DevOps
-- Запуск проекта в Docker в двух режимах (dev + prod)
-- Проксирование запросов на nginx
+- Launching project in two environments (dev + prod)
+- Nginx web-server (balancer)
+- CI/CD workflow using Github Actions
+    1. Launching tests
+    2. Deploying to prod server
 ### Other
-- Регулярный рефакторинг проекта: DRY, YAGNI, KISS
+- Project refactoring: DRY, YAGNI, KISS
 
-## Технический стек
-
+## Tech Stack
 - **Backend**: Python, FastAPI, SQLAlchemy, PostgreSQL, alembic, jwt, bcrypt, pytest
 - **Frontend**: HTML, CSS, JavaScript, React
-- **DevOps**: Docker, Docker Compose, Nginx
+- **DevOps**: Docker, Docker Compose, Nginx, CI/CD, Yandex Cloud
 
-## Запуск проекта
+## Screenshots
+![image](assets/main-page.png)
+![image](assets/registration-page.png)
+![image](assets/login-page.png)
 
-### В Docker
+## Project Launch
+
+### Docker
 **Development environment**
 ```
 docker compose up --build
@@ -38,7 +44,7 @@ docker compose up --build
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up
 ```
 
-### Локально
+### Local
 ```
 cd backend
 python -m app.main
@@ -49,7 +55,7 @@ cd frontend
 npm start
 ```
 
-### Запуск тестов (со статистикой)
+### Test Launch
 ```
 cd backend/tests
 pytest --duration=0

@@ -1,7 +1,7 @@
 # Nighdee Backend
-**Backend**: Python, FastAPI, SQLAlchemy, PostgreSQL, alembic, jwt, bcrypt, pytest
+**Stack**: Python, FastAPI, SQLAlchemy, PostgreSQL, alembic, jwt, bcrypt, pytest
 
-## File structure
+## File Structure
 ```
 .
 ├── alembic                   — migrations

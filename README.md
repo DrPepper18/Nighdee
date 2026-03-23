@@ -27,11 +27,6 @@ Nighdee — web-service for creating parties and gathering people with the same 
 - **Frontend**: HTML, CSS, JavaScript, React
 - **DevOps**: Docker, Docker Compose, Nginx, CI/CD, Yandex Cloud
 
-## Screenshots
-![image](assets/main-page.png)
-![image](assets/registration-page.png)
-![image](assets/login-page.png)
-
 ## Architecture
 ```
 Client

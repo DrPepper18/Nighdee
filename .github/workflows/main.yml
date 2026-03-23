@@ -58,6 +58,6 @@ jobs:
         script: |
           cd ~/Nighdee
           git pull origin main
-          sudo docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+          sudo docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
           sudo docker image prune -f
       

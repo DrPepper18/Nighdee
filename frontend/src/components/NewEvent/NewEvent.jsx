@@ -46,6 +46,7 @@ const NewEventCard = ({position}) => {
     return (
         <Popup>
             <form id="NewEventForm" style={{width: '250px'}}>
+                <h2>Новое событие</h2>
                 <input className="event-card__input" name="name" placeholder="Название" value={inputs.name} onChange={handleChange}/>
                 <input className="event-card__input" name="dateTime" type="datetime-local" value={inputs.dateTime} onChange={handleChange}/>
                 <div id="capacityDiv">
@@ -65,7 +66,7 @@ const NewEventCard = ({position}) => {
                     />
                     <h3>лет</h3>
                 </div>
-                <input id="newEventButton" type="button" className="button button--to-go"
+                <input id="newEventButton" type="button" style={{width: '100%'}} className="button button--to-go"
                     value="Начать созыв!" onClick={handleCreate}
                 />
             </form>

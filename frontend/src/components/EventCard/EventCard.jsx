@@ -72,24 +72,25 @@ const EventCard = ({event}) => {
             <input 
                 type="button" 
                 id="ToGoID"
+                style={{width: '100%'}}
                 className={buttonStyle} 
                 disabled={isFull && !isJoined} 
                 value={isJoined ? "Я не приду..." : (isFull ? "Мест нет" : "Я приду!")}
                 onClick={handleJoin}
             />
             <div>
-                <small>🔗 </small>
-                <a 
-                    href={shareUrl} 
-                    style={{ fontSize: '11px', textDecoration: 'none', color: '#007bff' }}
-                    onClick={(e) => {
-                        e.preventDefault();
-                        navigator.clipboard.writeText(shareUrl);
-                        alert("Скопировано!");
-                    }}
-                >
-                    {shareUrl}
-                </a>
+                <small>🔗 
+                    <a 
+                        href={shareUrl} 
+                        onClick={(e) => {
+                            e.preventDefault();
+                            navigator.clipboard.writeText(shareUrl);
+                            alert("Скопировано!");
+                        }}
+                    >
+                        {shareUrl}
+                    </a>
+                </small>
             </div>
         </Popup>
     );

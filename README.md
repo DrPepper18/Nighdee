@@ -5,7 +5,7 @@
 ## About
 Nighdee — web-service for creating parties and gathering people with the same interests. User can create event, name it and choose its date and time so other ones may find it and join it.
 
-## Функционал
+## Functionality
 ### Backend
 - Database migration support
 - Unit- and integration tests coverage
@@ -32,8 +32,26 @@ Nighdee — web-service for creating parties and gathering people with the same 
 ![image](assets/registration-page.png)
 ![image](assets/login-page.png)
 
-## Project Launch
+## Architecture
+```
+Client
+└── Reverse Proxy (Nginx)
+    ├── Frontend (React)
+    └── Backend (Python)
+        └── Database (PostgreSQL)
+```
 
+## Screenshots
+### Create event
+![image](assets/main-page.png)
+### Profile and Event Card
+![image](assets/profile.png)
+### Registration
+![image](assets/registration-page.png)
+### Login
+![image](assets/login-page.png)
+
+## Project Launch
 ### Docker
 **Development environment**
 ```

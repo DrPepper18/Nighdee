@@ -45,10 +45,10 @@ const Sidebar = () => {
 
     return (
         <div className={`sidebar ${hidden? "sidebar--closed" : "sidebar--open"}`}>
-            <input type="button" value="☰" onClick={handleClick}/>
+            <input type="button" className="sidebar__button" value="☰" onClick={handleClick}/>
             <div className="sidebar__content">
                 <div className='content-block'>
-                    <h2>Редактирование профиля</h2>
+                    <h2>Профиль</h2>
                     <input
                         className="reg-screen__input"
                         placeholder="Nickname"
@@ -83,6 +83,7 @@ const Sidebar = () => {
                 <footer className='content-block'>
                     <p><a href={PRIVACY_LINK}>Политика и Правила сервиса</a></p>
                     <p><a href="" onClick={handleDelete}>Удалить аккаунт</a></p>
+                    <p>(c) 2026, Nighdee, All rights reserved</p>
                 </footer>
             </div>
         </div>

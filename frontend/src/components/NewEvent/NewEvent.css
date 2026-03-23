@@ -1,14 +1,14 @@
 #capacity_input, #minage_input, #maxage_input {
     height: 20px;
 }
-#capacityDiv > h3 { margin-top: 10px; }
-#ageDiv > h3 { margin-top: 10px; }
+#capacityDiv > h3 { margin: 5px; }
+#ageDiv > h3 { margin: 5px; }
 #datetimeDiv, #ageDiv, #capacityDiv {
     display: flex;
 }
-input[type="datetime-local"] {
-    width: 96%;
+input[name="dateTime"], input[name="name"] {
+    width: 100%;
 }
 .event-card__input {
-    border: 1px black solid;
+    border: 1px gray solid;
 }

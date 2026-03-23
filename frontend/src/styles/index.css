@@ -23,3 +23,7 @@
     .button--negative:hover {
         background-color: rgb(255, 94, 0);
     }
+
+.leaflet-popup-content {
+    margin: 16px;
+}

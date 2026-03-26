@@ -47,11 +47,9 @@ const Map = ({ events }) => {
     const [map, setMap] = useState(null);
     const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
     const markerRefs = useRef({});
-    // Добавляем флаг, чтобы не "летать" по карте при каждом обновлении списка ивентов
     const hasCenteredRef = useRef(false);
 
     useEffect(() => {
-        // Ждем, пока карта проинициализируется и придут данные
         if (!map || events.length === 0 || hasCenteredRef.current) return;
 
         const params = new URLSearchParams(window.location.search);

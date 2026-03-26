@@ -48,31 +48,31 @@ const RegScreen = () => {
     };
 
     return (
-        <div className="reg-screen">
+        <div className="reg-screen standard-window standard-border">
             <h1>Nighdee. Join us!</h1>
             <input
                 type="email"
-                className="reg-screen__input"
+                className="standard-border full-width"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
             />
             <input
                 type="password"
-                className="reg-screen__input"
+                className="standard-border full-width"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
             <input
-                className="reg-screen__input"
+                className="standard-border full-width"
                 placeholder="Nickname"
                 value={nickname}
                 onChange={(e) => setNickname(e.target.value)}
             />
             <input
                 type="date"
-                className="reg-screen__input"
+                className="standard-border full-width"
                 placeholder="Birthdate"
                 value={birthdate}
                 onChange={(e) => setBirthdate(e.target.value)}
@@ -88,12 +88,13 @@ const RegScreen = () => {
                 </p>
             </div>
             <input
-                className="button button--to-go"
+                className="button button--to-go full-width"
                 type="button"
                 value="Register"
                 onClick={handleRegister}
             />
             <input
+                className="full-width"
 				type="button"
 				value="Log in"
 				onClick={() => window.location.href = '/login'}

@@ -71,9 +71,8 @@ const EventCard = ({event}) => {
             </p>
             <input 
                 type="button" 
-                id="ToGoID"
-                style={{width: '100%'}}
-                className={buttonStyle} 
+                id="ConfirmButton"
+                className={`${buttonStyle} full-width`} 
                 disabled={isFull && !isJoined} 
                 value={isJoined ? "Я не приду..." : (isFull ? "Мест нет" : "Я приду!")}
                 onClick={handleJoin}

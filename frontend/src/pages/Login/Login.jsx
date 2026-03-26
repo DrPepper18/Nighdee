@@ -22,28 +22,29 @@ const LoginScreen = () => {
 	};
 
 	return (
-		<div className='login-panel'>
+		<div className='login-panel standard-window standard-border'>
 			<h1>Nighdee. Log in</h1>
 			<input
-				className='login-panel__input'
+				className='login-panel__input standard-border full-width'
 				placeholder="E-mail"
 				value={email}
 				onChange={(e) => setEmail(e.target.value)}
 			/>
 			<input
 				type="password"
-				className='login-panel__input'
+				className='login-panel__input standard-border full-width'
 				placeholder="Password"
 				value={password}
 				onChange={(e) => setPassword(e.target.value)}
 			/>
 			<input
-				className='button button--to-go'
+				className='button button--to-go full-width'
 				type="button"
 				value="Log in"
 				onClick={handleLogin}
 			/>
 			<input
+				className='full-width'
 				type="button"
 				value="Register"
 				onClick={() => window.location.href = '/register'}

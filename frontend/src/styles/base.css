@@ -9,11 +9,11 @@ a {
     color: #007bff;
 }
 input {
-    box-sizing:border-box;
+    box-sizing: border-box;
     font-size: 20px;
     border: 0;
     border-radius: 20px;
-    margin: 4px 0 4px 0;
+    margin: 4px 4px 4px 0;
 }
 input[type=button]:hover { cursor: pointer; }
 body { margin: 0; }

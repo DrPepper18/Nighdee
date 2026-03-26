@@ -50,20 +50,20 @@ const Sidebar = () => {
                 <div className='content-block'>
                     <h2>Профиль</h2>
                     <input
-                        className="reg-screen__input"
+                        className="standard-border full-width"
                         placeholder="Nickname"
                         value={nickname}
                         onChange={(e) => setNickname(e.target.value)}
                     />
                     <input
                         type="date"
-                        className="reg-screen__input"
+                        className="standard-border full-width"
                         placeholder="Birthdate"
                         value={birthdate}
                         onChange={(e) => setBirthdate(e.target.value)}
                     />
                     <input
-                        className="button button--to-go"
+                        className="button button--to-go full-width"
                         type="button"
                         value="Сохранить"
                         onClick={handleEdit}

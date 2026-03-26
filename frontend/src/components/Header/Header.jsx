@@ -3,7 +3,7 @@ import './Header.css'
 
 export const Header = () => {
     return (
-        <header className="app-header">
+        <header className="app-header standard-border">
             <div className="app-header__logo">
                 <h3>Nighdee.</h3>
             </div>

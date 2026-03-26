@@ -27,3 +27,12 @@
 .leaflet-popup-content {
     margin: 16px;
 }
+
+.standard-border { border: 1px gray solid; }
+.full-width { width: 100%; }
+.standard-window {
+    margin-inline: auto; 
+    width: 320px; 
+    border-radius: 20px; 
+    padding: 16px;
+}

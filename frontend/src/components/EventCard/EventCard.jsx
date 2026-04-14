@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Popup } from 'react-leaflet';
-import { joinEvent, checkEventJoinStatus, cancelJoin } from '../../api';
+import { bookingRequest } from '../../api';
 import './EventCard.css'
 
 
@@ -9,7 +9,7 @@ const EventCard = ({event}) => {
 
     const checkStatus = async () => {
         try {
-            const joined = await checkEventJoinStatus(event.id);
+            const joined = await bookingRequest.checkStatus(event.id);
             setIsJoined(joined);
         } catch (err) {
             console.error("Ошибка проверки статуса:", err);
@@ -19,7 +19,7 @@ const EventCard = ({event}) => {
     const handleJoin = async () => {
         try {
             if (!isJoined) {
-                await joinEvent(event.id);
+                await bookingRequest.join(event.id);
                 setIsJoined(true);
                 event.participants_count += 1;
                 alert("Вы записаны!");
@@ -27,15 +27,14 @@ const EventCard = ({event}) => {
                 // Не будет кайфоломов, которые будут регаться на все подряд и никуда не приходить
                 // Участие будет более осознанное
             } else {
-                await cancelJoin(event.id);
+                await bookingRequest.cancel(event.id);
                 setIsJoined(false);
                 event.participants_count -= 1;
                 alert("Вы отказались от события...");
                 // Аналогично...
             }
             
-        } catch (error) {
-            console.error("Ошибка при записи:", error);
+        } catch {
             alert("Не удалось записаться");
         }
     };

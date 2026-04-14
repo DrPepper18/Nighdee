@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getUserInfo, updateUserInfo, deleteUser } from '../../api';
+import { userRequest } from '../../api';
 import './Sidebar.css'
 import { calculateAge } from '../../utils/DateFucntions';
 
@@ -19,15 +19,20 @@ const Sidebar = () => {
             alert("Вам должно быть больше 18 лет.");
             return;
         }
-        await updateUserInfo(nickname, birthdate);
-        alert("Данные успешно сохранены");
+        try {
+            await userRequest.updateInfo(nickname, birthdate);
+            alert("Данные успешно сохранены");
+        } catch (error) {
+            alert("Произошла ошибка при сохранении данных");
+        }
+        
     }
     const handleDelete = async (e) => {
         e.preventDefault();
         const is_sure = confirm("Ваш аккаунт будет удалён безвозвратно. Вы уверены?");
         if (is_sure) {
             try {
-                await deleteUser();
+                await userRequest.delete();
                 navigate('/login');
             } catch {
                 console.error("Error occured");
@@ -38,7 +43,7 @@ const Sidebar = () => {
 
     useEffect(() => {
         const fetchUserData = async () => {
-            let userData = await getUserInfo();
+            let userData = await userRequest.getInfo();
             console.log(userData);
             setNickname(userData["name"]);
             setBirthdate(userData["birthdate"]);

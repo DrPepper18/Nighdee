@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { checkLogin } from "../../api"
+import { userRequest } from "../../api"
 import './Login.css'
 
 
@@ -16,7 +16,7 @@ const LoginScreen = () => {
 			return;
 		}
 		try {
-			await checkLogin(email, password);
+			await userRequest.login(email, password);
 			navigate('/');
 		} catch(error) {
 			alert(error);

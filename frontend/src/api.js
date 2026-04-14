@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+
 const api = axios.create({
     baseURL: '/api/',
     headers: {
@@ -46,110 +47,71 @@ api.interceptors.response.use(
 );
 
 
-export const registerUser = async (user) => {
-    try {
+const withErrorHandling = (fn) => {
+    return async (...args) => {
+        try {
+            return await fn(...args);
+        } catch (error) {
+            console.error('Error:', error.response?.data || error.message);
+            throw error;
+        }
+    }
+}
+
+
+export const userRequest = class {
+    static register = withErrorHandling(async (user) => {
         const response = await api.post('/auth/register', user, { withCredentials: true });
         localStorage.setItem('jwt', response.data.token);
-    } catch (error) {
-        console.error('Registration error:', error.response?.data || error.message);
-        throw error;
-    }
-};
+    });
 
-
-export const checkLogin = async (email, password) => {
-    try {
+    static login = withErrorHandling(async (email, password) => {
         const response = await api.post('/auth/login', { email, password }, { withCredentials: true });
         localStorage.setItem('jwt', response.data.token);
-    } catch (error) {
-        let message = null;
-        switch(error.response.status) {
-            case 401:
-                message = "Неправильные данные для входа";
-                break;
-            case 404:
-                message = "Не найден такой пользователь";
-                break;
-            default:
-                message = "Неизвестная ошибка. Повторите позже";
-        }
-        throw message;
-    }
-    
-};
+    });
 
-
-export const getUserInfo = async () => {
-    try {
+    static getInfo = withErrorHandling(async () => {
         const response = await api.get('/auth/');
         return response.data;
-    } catch {
-        console.error("Произошла ошибка. Попробуйте позже");
-    }
-}
+    });
 
-
-export const updateUserInfo = async (name, birthdate) => {
-    try {
+    static updateInfo = withErrorHandling(async (name, birthdate) => {
         const response = await api.patch('/auth/', {name, birthdate});
         return response.data;
-    } catch {
-        console.error("Произошла ошибка. Попробуйте позже");
-    }
-}
+    });
 
-
-export const deleteUser = async () => {
-    try {
+    static delete = withErrorHandling(async () => {
         const response = await api.delete('/auth/', { withCredentials: true });
         localStorage.clear();
         return response.data;
-    } catch {
-        console.error("Произошла ошибка. Попробуйте позже");
-    }
+    });
 }
 
 
-export const getEvents = async () => {
-    const response = await api.get('/event/', {});
-    console.log(response.data);
-    return response.data;
-};
+export const eventRequest = class {
+    static getAll = withErrorHandling(async () => {
+        const response = await api.get('/event/');
+        return response.data;
+    });
 
-
-export const createEvent = async (eventData) => {
-    try {
+    static create = withErrorHandling(async (eventData) => {
         await api.post('/event/', eventData);
         window.location.href = '/';
-    } catch (error) {
-        console.error('Event creation error:', error.response?.data || error.message);
-    }
-};
-
-
-export const joinEvent = async (event_id) => {
-    try {
-        await api.post(`/book/${event_id}`);
-    } catch (error) {
-        const errorMessage = error.response?.data?.detail || "Произошла ошибка при записи";
-        console.error('Event join error:', error.response?.data || error.message);
-        alert(errorMessage);
-    } 
-};
-
-
-export const cancelJoin = async (event_id) => {
-    try {
-        await api.delete(`/book/${event_id}`);
-    } catch (error) {
-        const errorMessage = error.response?.data?.detail || "Произошла ошибка при записи";
-        console.error('Event join error:', error.response?.data || error.message);
-        alert(errorMessage);
-    } 
-};
-
-
-export const checkEventJoinStatus = async (event_id) => {
-    const response = await api.get(`/book/${event_id}`);
-    return response.data.joined;
+    });
 }
+
+
+export const bookingRequest = class {
+    static join = withErrorHandling(async (event_id) => {
+        await api.post(`/book/${event_id}`);
+    });
+
+    static cancel = withErrorHandling(async (event_id) => {
+        await api.delete(`/book/${event_id}`);
+    });
+    
+    static checkStatus = withErrorHandling(async (event_id) => {
+        const response = await api.get(`/book/${event_id}`);
+        return response.data.joined;
+    });
+};

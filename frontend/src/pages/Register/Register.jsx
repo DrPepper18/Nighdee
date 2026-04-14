@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Register.css';
-import { registerUser } from "../../api";
+import { userRequest } from "../../api";
 import { calculateAge } from '../../utils/DateFucntions';
 
 
@@ -42,7 +42,7 @@ const RegScreen = () => {
         };
 
         try {
-            await registerUser(user);
+            await userRequest.register(user);
             navigate('/');
         } catch (error) {
             alert(error.response.data.detail || "Произошла ошибка");

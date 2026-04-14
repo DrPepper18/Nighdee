@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Popup } from 'react-leaflet';
-import { createEvent } from '../../api';
+import { eventRequest } from '../../api';
 import './NewEvent.css'
 
 
@@ -32,8 +32,12 @@ const NewEventCard = ({position}) => {
         } else if (hour >= 23 || hour < 5) {
             alert("Нельзя создавать события в это время");
         } else {
-            await createEvent(finalData);
-            alert("Событие создано!");
+            try {
+                await eventRequest.create(finalData);
+                alert("Событие создано!");
+            } catch {
+                alert("Произошла ошибка при создании события");
+            }
         }
     };
 

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Register.css';
 import { registerUser } from "../../api";
 import { calculateAge } from '../../utils/DateFucntions';
 
 
 const RegScreen = () => {
+    const navigate = useNavigate();
     const [nickname, setNickname] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -41,14 +43,14 @@ const RegScreen = () => {
 
         try {
             await registerUser(user);
-            window.location.href = '/';
+            navigate('/');
         } catch (error) {
             alert(error.response.data.detail || "Произошла ошибка");
         }
     };
 
     return (
-        <div className="reg-screen standard-window standard-border">
+        <div className="standard-window standard-border">
             <h1>Nighdee. Join us!</h1>
             <input
                 type="email"
@@ -97,7 +99,7 @@ const RegScreen = () => {
                 className="full-width"
 				type="button"
 				value="Log in"
-				onClick={() => window.location.href = '/login'}
+				onClick={() => navigate('/login')}
 			/>
         </div>
     );

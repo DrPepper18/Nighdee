@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { checkLogin } from "../../api"
 import './Login.css'
 
 
 
 const LoginScreen = () => {
+	const navigate = useNavigate();
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
@@ -15,14 +17,14 @@ const LoginScreen = () => {
 		}
 		try {
 			await checkLogin(email, password);
-			window.location.href = '/';
+			navigate('/');
 		} catch(error) {
 			alert(error);
 		}
 	};
 
 	return (
-		<div className='login-panel standard-window standard-border'>
+		<div className='standard-window standard-border'>
 			<h1>Nighdee. Log in</h1>
 			<input
 				className='login-panel__input standard-border full-width'
@@ -47,7 +49,7 @@ const LoginScreen = () => {
 				className='full-width'
 				type="button"
 				value="Register"
-				onClick={() => window.location.href = '/register'}
+				onClick={() => navigate('/register')}
 			/>
 		</div>
 	);

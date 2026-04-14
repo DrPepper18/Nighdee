@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getUserInfo, updateUserInfo, deleteUser } from '../../api';
 import './Sidebar.css'
 import { calculateAge } from '../../utils/DateFucntions';
 
 
 const Sidebar = () => {
+    const navigate = useNavigate();
     const [hidden, setHidden] = useState(true);
     const handleClick = () => setHidden(!hidden);
     const [nickname, setNickname] = useState('');
@@ -20,12 +22,13 @@ const Sidebar = () => {
         await updateUserInfo(nickname, birthdate);
         alert("Данные успешно сохранены");
     }
-    const handleDelete = async () => {
+    const handleDelete = async (e) => {
+        e.preventDefault();
         const is_sure = confirm("Ваш аккаунт будет удалён безвозвратно. Вы уверены?");
         if (is_sure) {
             try {
                 await deleteUser();
-                window.location.href = '/login';
+                navigate('/login');
             } catch {
                 console.error("Error occured");
             }
@@ -82,7 +85,7 @@ const Sidebar = () => {
                 </div>
                 <footer className='content-block'>
                     <p><a href={PRIVACY_LINK}>Политика и Правила сервиса</a></p>
-                    <p><a href="" onClick={handleDelete}>Удалить аккаунт</a></p>
+                    <p><a href="" onClick={(e) => handleDelete(e)}>Удалить аккаунт</a></p>
                     <p>(c) 2026, Nighdee, All rights reserved</p>
                 </footer>
             </div>

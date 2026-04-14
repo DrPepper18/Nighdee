@@ -1,38 +1,19 @@
-.button {
-    width: auto;
-    padding: 5px 20px 5px 20px;
+* { font-family: 'Comfortaa'; }
+h1, h2, h3, h4, h5 { 
+    margin-block-start: 0.2em;
+    margin-block-end: 0.4em;
+}
+p { font-size: 10px; }
+a { 
+    text-decoration: 'none';
+    color: #007bff;
+}
+input {
+    box-sizing: border-box;
     font-size: 20px;
-    color: white;
-    border-radius: 10px;
+    border: 0;
+    border-radius: 20px;
+    margin: 4px 4px 4px 0;
 }
-
-.button--to-go {
-    background-color: green;
-}
-    .button--to-go:hover {
-        background-color: rgb(2, 182, 182);
-    }
-    .button--to-go:disabled {
-        opacity: 25%;
-        background-color: gray;
-    }
-
-.button--negative {
-    background-color: rgb(206, 47, 47);
-}
-    .button--negative:hover {
-        background-color: rgb(255, 94, 0);
-    }
-
-.leaflet-popup-content {
-    margin: 16px;
-}
-
-.standard-border { border: 1px gray solid; }
-.full-width { width: 100%; }
-.standard-window {
-    margin-inline: auto; 
-    width: 320px; 
-    border-radius: 20px; 
-    padding: 16px;
-}
+input[type=button]:hover { cursor: pointer; }
+body { margin: 0; }

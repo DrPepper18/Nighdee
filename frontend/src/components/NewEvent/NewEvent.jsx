@@ -50,23 +50,23 @@ const NewEventCard = ({position}) => {
                 <input className="event-card__input standard-border full-width" name="name" placeholder="Название" value={inputs.name} onChange={handleChange}/>
                 <input className="event-card__input standard-border full-width" name="dateTime" type="datetime-local" value={inputs.dateTime} onChange={handleChange}/>
                 <div id="capacityDiv">
-                    <input className="event-card__input standard-border" name="capacity" type="number"
-                        min="1" max="16" value={inputs.capacity} onChange={handleChange}
+                    <input className="event-card__input standard-border" name="capacity" placeholder="--"
+                        type="number" min="1" max="16" value={inputs.capacity} onChange={handleChange}
                     />
                     <h3>человек</h3>
                 </div>
                 <div id="ageDiv">
                     <h3>от</h3>
-                    <input className="event-card__input standard-border" name="minAge" type="number" 
-                        min="0" max="100" value={inputs.minAge} onChange={handleChange}
+                    <input className="event-card__input standard-border" name="minAge" placeholder="--"
+                        type="number" min="0" max="100" value={inputs.minAge} onChange={handleChange}
                     />
                     <h3>до</h3>
-                    <input className="event-card__input standard-border" name="maxAge" type="number" 
-                        min="0" max="100" value={inputs.maxAge} onChange={handleChange}
+                    <input className="event-card__input standard-border" name="maxAge" placeholder="--"
+                        type="number" min="0" max="100" value={inputs.maxAge} onChange={handleChange}
                     />
                     <h3>лет</h3>
                 </div>
-                <input id="newEventButton" type="button" className="button button--to-go full-width"
+                <input type="button" className="button button--to-go full-width"
                     value="Начать созыв!" onClick={handleCreate}
                 />
             </form>

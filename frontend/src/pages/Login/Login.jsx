@@ -30,7 +30,6 @@ const LoginScreen = () => {
 			await userRequest.login(email, password);
 			navigate('/');
 		} catch(error) {
-			console.log(error);
 			setModal({
 				isOpen: true,
 				title: "Ошибка",

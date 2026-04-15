@@ -28,7 +28,6 @@ const Sidebar = () => {
                 title: "Ошибка",
                 content: <ChildrenAlert message="Вам должно быть больше 18 лет." onClose={closeModal} />
             });
-            console.log(modal);
             return;
         }
         try {

@@ -46,7 +46,7 @@ const LoginScreen = () => {
 				onClick={handleLogin}
 			/>
 			<input
-				className='full-width'
+				className='button full-width'
 				type="button"
 				value="Register"
 				onClick={() => navigate('/register')}

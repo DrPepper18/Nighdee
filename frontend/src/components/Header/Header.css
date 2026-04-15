@@ -6,6 +6,7 @@
     padding: 8px;
     box-sizing: border-box;
     height: 11vh;
+    background-color: var(--background-header);
 }
 
 .app-header__logo {

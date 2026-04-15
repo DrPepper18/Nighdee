@@ -96,7 +96,7 @@ const RegScreen = () => {
                 onClick={handleRegister}
             />
             <input
-                className="full-width"
+                className="button full-width"
 				type="button"
 				value="Log in"
 				onClick={() => navigate('/login')}

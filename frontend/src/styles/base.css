@@ -3,24 +3,37 @@
     --primary-gradient: #03bb93;
     --negative-color: rgb(206, 47, 47);
     --negative-gradient: rgb(255, 94, 0);
-    --neutral-color: gray;
+    --neutral-color: lightgray;
     --neutral-hover: rgb(0,0,0,0.1);
     --background-sidebar: rgb(246, 246, 246);
+    --background-header: white;
     --links-color: #007bff;
     --links-hover-color: #0056b3;
+    --text-color: black;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-color: white;
+        --background-sidebar: rgb(36, 36, 36);
+        --background-header: black;
+        --neutral-color: darkgray;
+    }
 }
 
 .button {
     width: auto;
     padding: 5px 20px 5px 20px;
     font-size: 20px;
-    color: white;
+    color: var(--text-color);
     border-radius: 10px;
     transition: background-color 0.3s;
+    background-color: var(--neutral-color);
 }
 
 .button--to-go {
     background-color: var(--primary-color);
+    color: white;
 }
     .button--to-go:hover {
         background-color: var(--primary-gradient);
@@ -32,6 +45,7 @@
 
 .button--negative {
     background-color: var(--negative-color);
+    color: white;
 }
     .button--negative:hover {
         background-color: var(--negative-gradient);

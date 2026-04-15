@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { userRequest } from "../../api"
 import './Login.css'
+import { Dialog, ChildrenAlert } from '../../components/Dialog/Dialog.jsx';
 
 
 
@@ -9,17 +10,32 @@ const LoginScreen = () => {
 	const navigate = useNavigate();
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [modal, setModal] = useState({ 
+			isOpen: false, 
+			title: '', 
+			content: null 
+		});
+	const closeModal = () => setModal({ ...modal, isOpen: false });
 
 	const handleLogin = async () => {
 		if (!email || !password) {
-			alert("Пожалуйста, введите все данные");
+			setModal({
+				isOpen: true,
+				title: "Ошибка",
+				content: <ChildrenAlert message="Пожалуйста, введите все данные" onClose={closeModal} />
+			});
 			return;
 		}
 		try {
 			await userRequest.login(email, password);
 			navigate('/');
 		} catch(error) {
-			alert(error);
+			console.log(error);
+			setModal({
+				isOpen: true,
+				title: "Ошибка",
+				content: <ChildrenAlert message={error.message} onClose={closeModal} />
+			});
 		}
 	};
 
@@ -51,6 +67,11 @@ const LoginScreen = () => {
 				value="Register"
 				onClick={() => navigate('/register')}
 			/>
+			{modal.isOpen && (
+				<Dialog title={modal.title} onClose={closeModal}>
+					{modal.content}
+				</Dialog>
+			)}
 		</div>
 	);
 };

@@ -13,6 +13,8 @@ Nighdee — web-service for creating parties and gathering people with the same 
 ### Frontend
 - OpenStreetMap API integration
 - Responsive web-design for mobile devices
+- Light and dark color schemes
+- UX/UI identity: fonts, colors, forms
 ### DevOps
 - Launching project in two environments (dev + prod)
 - Nginx web-server (balancer)

@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Popup } from 'react-leaflet';
-import { joinEvent, checkEventJoinStatus, cancelJoin } from '../../api';
+import { bookingRequest } from '../../api';
 import './EventCard.css'
+import { Dialog, ChildrenAlert } from '../Dialog/Dialog.jsx';
 
 
 const EventCard = ({event}) => {
     const [isJoined, setIsJoined] = useState(false);
+    const [modal, setModal] = useState({ 
+        isOpen: false, 
+        title: '', 
+        content: null 
+    });
+    const closeModal = () => setModal({ ...modal, isOpen: false });
 
     const checkStatus = async () => {
         try {
-            const joined = await checkEventJoinStatus(event.id);
+            const joined = await bookingRequest.checkStatus(event.id);
             setIsJoined(joined);
         } catch (err) {
             console.error("Ошибка проверки статуса:", err);
@@ -19,24 +26,35 @@ const EventCard = ({event}) => {
     const handleJoin = async () => {
         try {
             if (!isJoined) {
-                await joinEvent(event.id);
+                await bookingRequest.join(event.id);
                 setIsJoined(true);
                 event.participants_count += 1;
-                alert("Вы записаны!");
-                // Лучше alert пока не убирать - они замедляют присоединение к событию.
+                setModal({
+                    isOpen: true,
+                    title: "Успех",
+                    content: <ChildrenAlert message="Вы записаны!" onClose={closeModal} />
+                });
+                // Лучше модальные окна пока не убирать - они замедляют присоединение к событию.
                 // Не будет кайфоломов, которые будут регаться на все подряд и никуда не приходить
                 // Участие будет более осознанное
             } else {
-                await cancelJoin(event.id);
+                await bookingRequest.cancel(event.id);
                 setIsJoined(false);
                 event.participants_count -= 1;
-                alert("Вы отказались от события...");
+                setModal({
+                    isOpen: true,
+                    title: "Успех",
+                    content: <ChildrenAlert message="Вы отказались от события..." onClose={closeModal} />
+                });
                 // Аналогично...
             }
             
-        } catch (error) {
-            console.error("Ошибка при записи:", error);
-            alert("Не удалось записаться");
+        } catch {
+            setModal({
+                isOpen: true,
+                title: "Ошибка",
+                content: <ChildrenAlert message="Не удалось записаться" onClose={closeModal} />
+            });
         }
     };
     let ageLabel = "";
@@ -91,6 +109,11 @@ const EventCard = ({event}) => {
                     </a>
                 </small>
             </div>
+            {modal.isOpen && (
+                <Dialog title={modal.title} onClose={closeModal}>
+                    {modal.content}
+                </Dialog>
+            )}
         </Popup>
     );
 }

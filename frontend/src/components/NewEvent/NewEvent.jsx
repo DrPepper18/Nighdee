@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Popup } from 'react-leaflet';
-import { createEvent } from '../../api';
+import { eventRequest } from '../../api';
 import './NewEvent.css'
-
+import { Dialog, ChildrenAlert } from '../Dialog/Dialog.jsx';
 
 
 const NewEventCard = ({position}) => {
@@ -14,6 +14,12 @@ const NewEventCard = ({position}) => {
         minAge: "",
         maxAge: ""
     });
+    const [modal, setModal] = useState({ 
+        isOpen: false, 
+        title: '', 
+        content: null 
+    });
+    const closeModal = () => setModal({ ...modal, isOpen: false });
 
     const handleCreate = async () => {       
         const finalData = {
@@ -28,12 +34,32 @@ const NewEventCard = ({position}) => {
         const time = new Date(finalData.datetime);
         const hour = time.getHours();
         if (!(finalData.name && finalData.datetime && finalData.capacity)) {
-            alert("Введите все данные");
+            setModal({
+                isOpen: true,
+                title: "Ошибка",
+                content: <ChildrenAlert message="Пожалуйста, заполните все обязательные поля" onClose={closeModal} />
+            });
         } else if (hour >= 23 || hour < 5) {
-            alert("Нельзя создавать события в это время");
+            setModal({
+                isOpen: true,
+                title: "Ошибка",
+                content: <ChildrenAlert message="Нельзя создавать события в это время" onClose={closeModal} />
+            });
         } else {
-            await createEvent(finalData);
-            alert("Событие создано!");
+            try {
+                await eventRequest.create(finalData);
+                setModal({
+                    isOpen: true,
+                    title: "Успех",
+                    content: <ChildrenAlert message="Событие успешно создано!" onClose={closeModal} />
+                });
+            } catch {
+                setModal({
+                    isOpen: true,
+                    title: "Ошибка",
+                    content: <ChildrenAlert message="Произошла ошибка при создании события" onClose={closeModal} />
+                });
+            }
         }
     };
 
@@ -50,26 +76,31 @@ const NewEventCard = ({position}) => {
                 <input className="event-card__input standard-border full-width" name="name" placeholder="Название" value={inputs.name} onChange={handleChange}/>
                 <input className="event-card__input standard-border full-width" name="dateTime" type="datetime-local" value={inputs.dateTime} onChange={handleChange}/>
                 <div id="capacityDiv">
-                    <input className="event-card__input standard-border" name="capacity" type="number"
-                        min="1" max="16" value={inputs.capacity} onChange={handleChange}
+                    <input className="event-card__input standard-border" name="capacity" placeholder="--"
+                        type="number" min="1" max="16" value={inputs.capacity} onChange={handleChange}
                     />
                     <h3>человек</h3>
                 </div>
                 <div id="ageDiv">
                     <h3>от</h3>
-                    <input className="event-card__input standard-border" name="minAge" type="number" 
-                        min="0" max="100" value={inputs.minAge} onChange={handleChange}
+                    <input className="event-card__input standard-border" name="minAge" placeholder="--"
+                        type="number" min="0" max="100" value={inputs.minAge} onChange={handleChange}
                     />
                     <h3>до</h3>
-                    <input className="event-card__input standard-border" name="maxAge" type="number" 
-                        min="0" max="100" value={inputs.maxAge} onChange={handleChange}
+                    <input className="event-card__input standard-border" name="maxAge" placeholder="--"
+                        type="number" min="0" max="100" value={inputs.maxAge} onChange={handleChange}
                     />
                     <h3>лет</h3>
                 </div>
-                <input id="newEventButton" type="button" className="button button--to-go full-width"
+                <input type="button" className="button button--to-go full-width"
                     value="Начать созыв!" onClick={handleCreate}
                 />
             </form>
+            {modal.isOpen && (
+                <Dialog title={modal.title} onClose={closeModal}>
+                    {modal.content}
+                </Dialog>
+            )}
         </Popup>
     );
 }

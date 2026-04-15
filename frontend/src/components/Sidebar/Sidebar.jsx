@@ -1,42 +1,73 @@
 import React, { useEffect, useState } from 'react';
-import { getUserInfo, updateUserInfo, deleteUser } from '../../api';
+import { useNavigate } from 'react-router-dom';
+import { userRequest } from '../../api';
 import './Sidebar.css'
 import { calculateAge } from '../../utils/DateFucntions';
+import { Dialog, ChildrenAlert, ChildrenConfirm } from '../Dialog/Dialog.jsx';
 
 
 const Sidebar = () => {
+    const navigate = useNavigate();
     const [hidden, setHidden] = useState(true);
     const handleClick = () => setHidden(!hidden);
     const [nickname, setNickname] = useState('');
     const [birthdate, setBirthdate] = useState('');
+    const [modal, setModal] = useState({ 
+        isOpen: false, 
+        title: '', 
+        content: null 
+    });
+    const closeModal = () => setModal({ ...modal, isOpen: false });
     const PRIVACY_LINK = 
     "https://docs.google.com/document/d/11QdpZhEwXqzgPyeY6tpTM_JyKh28AqKz5OHvJetl2Gg/edit?usp=sharing";
     
     const handleEdit = async () => {
         if (calculateAge(birthdate) < 18) {
-            alert("Вам должно быть больше 18 лет.");
+            setModal({
+                isOpen: true,
+                title: "Ошибка",
+                content: <ChildrenAlert message="Вам должно быть больше 18 лет." onClose={closeModal} />
+            });
             return;
         }
-        await updateUserInfo(nickname, birthdate);
-        alert("Данные успешно сохранены");
-    }
-    const handleDelete = async () => {
-        const is_sure = confirm("Ваш аккаунт будет удалён безвозвратно. Вы уверены?");
-        if (is_sure) {
-            try {
-                await deleteUser();
-                window.location.href = '/login';
-            } catch {
-                console.error("Error occured");
-            }
-            
+        try {
+            await userRequest.updateInfo(nickname, birthdate);
+            setModal({
+                isOpen: true,
+                title: "Успех",
+                content: <ChildrenAlert message="Данные успешно сохранены" onClose={closeModal} />
+            });
+        } catch (error) {
+            setModal({
+                isOpen: true,
+                title: "Ошибка",
+                content: <ChildrenAlert message="Произошла ошибка при сохранении данных" onClose={closeModal} />
+            });
         }
+        
+    }
+    const handleDelete = async (e) => {
+        e.preventDefault();
+        setModal({
+            isOpen: true,
+            title: "Подтверждение",
+            content: (
+                <ChildrenConfirm 
+                    message="Ваш аккаунт будет удалён безвозвратно. Вы уверены?" 
+                    onConfirm={async () => {
+                        await userRequest.delete();
+                        navigate('/login');
+                        closeModal();
+                    }}
+                    onCancel={closeModal}
+                />
+            )
+        });
     }
 
     useEffect(() => {
         const fetchUserData = async () => {
-            let userData = await getUserInfo();
-            console.log(userData);
+            let userData = await userRequest.getInfo();
             setNickname(userData["name"]);
             setBirthdate(userData["birthdate"]);
         }
@@ -82,10 +113,15 @@ const Sidebar = () => {
                 </div>
                 <footer className='content-block'>
                     <p><a href={PRIVACY_LINK}>Политика и Правила сервиса</a></p>
-                    <p><a href="" onClick={handleDelete}>Удалить аккаунт</a></p>
+                    <p><a href="" onClick={(e) => handleDelete(e)}>Удалить аккаунт</a></p>
                     <p>(c) 2026, Nighdee, All rights reserved</p>
                 </footer>
             </div>
+            {modal.isOpen && (
+                <Dialog title={modal.title} onClose={closeModal}>
+                    {modal.content}
+                </Dialog>
+            )}
         </div>
     );
 };

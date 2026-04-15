@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Map from '../../components/Map/Map.jsx';
 import Sidebar from "../../components/Sidebar/Sidebar.jsx";
 import { Header } from "../../components/Header/Header.jsx";
-import { getEvents } from '../../api.js'
+import { eventRequest } from '../../api.js'
 import './MainPage.css'
 
 const MainScreen = () => {
@@ -10,10 +10,10 @@ const MainScreen = () => {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                let data = await getEvents();
+                let data = await eventRequest.getAll();
                 setEvents(data || []);
             } catch (error) {
-                console.error('Error fetching events:', error);
+                console.error(error);
                 return [];
             }
         };

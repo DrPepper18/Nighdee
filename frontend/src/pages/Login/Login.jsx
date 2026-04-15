@@ -1,28 +1,45 @@
 import React, { useState } from 'react';
-import { checkLogin } from "../../api"
+import { useNavigate } from 'react-router-dom';
+import { userRequest } from "../../api"
 import './Login.css'
+import { Dialog, ChildrenAlert } from '../../components/Dialog/Dialog.jsx';
 
 
 
 const LoginScreen = () => {
+	const navigate = useNavigate();
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
+	const [modal, setModal] = useState({ 
+			isOpen: false, 
+			title: '', 
+			content: null 
+		});
+	const closeModal = () => setModal({ ...modal, isOpen: false });
 
 	const handleLogin = async () => {
 		if (!email || !password) {
-			alert("Пожалуйста, введите все данные");
+			setModal({
+				isOpen: true,
+				title: "Ошибка",
+				content: <ChildrenAlert message="Пожалуйста, введите все данные" onClose={closeModal} />
+			});
 			return;
 		}
 		try {
-			await checkLogin(email, password);
-			window.location.href = '/';
+			await userRequest.login(email, password);
+			navigate('/');
 		} catch(error) {
-			alert(error);
+			setModal({
+				isOpen: true,
+				title: "Ошибка",
+				content: <ChildrenAlert message={error.message} onClose={closeModal} />
+			});
 		}
 	};
 
 	return (
-		<div className='login-panel standard-window standard-border'>
+		<div className='standard-window standard-border'>
 			<h1>Nighdee. Log in</h1>
 			<input
 				className='login-panel__input standard-border full-width'
@@ -44,11 +61,16 @@ const LoginScreen = () => {
 				onClick={handleLogin}
 			/>
 			<input
-				className='full-width'
+				className='button full-width'
 				type="button"
 				value="Register"
-				onClick={() => window.location.href = '/register'}
+				onClick={() => navigate('/register')}
 			/>
+			{modal.isOpen && (
+				<Dialog title={modal.title} onClose={closeModal}>
+					{modal.content}
+				</Dialog>
+			)}
 		</div>
 	);
 };

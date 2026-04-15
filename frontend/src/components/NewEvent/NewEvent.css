@@ -1,9 +1,6 @@
 #newEventForm { 
     width: 240px;
 }
-#capacity_input, #minage_input, #maxage_input { 
-    height: 16px;
-}
 #capacityDiv > h3, #ageDiv > h3 { 
     margin: 4px;
 }

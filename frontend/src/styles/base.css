@@ -1,19 +1,72 @@
-* { font-family: 'Comfortaa'; }
-h1, h2, h3, h4, h5 { 
-    margin-block-start: 0.2em;
-    margin-block-end: 0.4em;
+:root {
+    --color-scheme: light;
+    --primary-color: green;
+    --primary-gradient: #03bb93;
+    --negative-color: rgb(206, 47, 47);
+    --negative-gradient: rgb(255, 94, 0);
+    --neutral-color: lightgray;
+    --neutral-hover: rgb(0,0,0,0.1);
+    --background-sidebar: rgb(246, 246, 246);
+    --background-header: white;
+    --links-color: #007bff;
+    --links-hover-color: #0056b3;
+    --text-color: black;
 }
-p { font-size: 10px; }
-a { 
-    text-decoration: 'none';
-    color: #007bff;
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-scheme: dark;
+        --text-color: white;
+        --background-sidebar: rgb(36, 36, 36);
+        --background-header: black;
+        --neutral-color: darkgray;
+    }
 }
-input {
-    box-sizing: border-box;
+
+.button {
+    width: auto;
+    padding: 5px 20px 5px 20px;
     font-size: 20px;
-    border: 0;
-    border-radius: 20px;
-    margin: 4px 4px 4px 0;
+    color: var(--text-color);
+    border-radius: 10px;
+    transition: background-color 0.3s;
+    background-color: var(--neutral-color);
 }
-input[type=button]:hover { cursor: pointer; }
-body { margin: 0; }
+
+.button--to-go {
+    background-color: var(--primary-color);
+    color: white;
+}
+    .button--to-go:hover {
+        background-color: var(--primary-gradient);
+    }
+    .button--to-go:disabled {
+        opacity: 25%;
+        background-color: var(--neutral-color);
+    }
+
+.button--negative {
+    background-color: var(--negative-color);
+    color: white;
+}
+    .button--negative:hover {
+        background-color: var(--negative-gradient);
+    }
+
+.leaflet-popup-content {
+    margin: 16px;
+}
+
+.standard-border { border: 1px gray solid; }
+.full-width { width: 100%; }
+.standard-window {
+    margin-top: 30vh;
+    margin-inline: auto; 
+    width: 320px; 
+    border-radius: 20px; 
+    padding: 16px;
+}
+
+@media (max-width: 500px) {
+    .button { transition: 0s; }
+}

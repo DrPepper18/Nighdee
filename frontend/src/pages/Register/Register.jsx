@@ -64,7 +64,11 @@ const RegScreen = () => {
             await userRequest.register(user);
             navigate('/');
         } catch (error) {
-            alert(error.response.data.detail || "Произошла ошибка");
+            setModal({
+                isOpen: true,
+                title: "Ошибка",
+                content: <ChildrenAlert message={error.response.data.detail || "Произошла ошибка при регистрации"} onClose={closeModal} />
+            });
         }
     };
 

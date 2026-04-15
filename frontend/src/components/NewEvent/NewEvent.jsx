@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Popup } from 'react-leaflet';
 import { eventRequest } from '../../api';
 import './NewEvent.css'
-
+import { Dialog, ChildrenAlert } from '../Dialog/Dialog.jsx';
 
 
 const NewEventCard = ({position}) => {
@@ -14,6 +14,12 @@ const NewEventCard = ({position}) => {
         minAge: "",
         maxAge: ""
     });
+    const [modal, setModal] = useState({ 
+        isOpen: false, 
+        title: '', 
+        content: null 
+    });
+    const closeModal = () => setModal({ ...modal, isOpen: false });
 
     const handleCreate = async () => {       
         const finalData = {
@@ -28,15 +34,31 @@ const NewEventCard = ({position}) => {
         const time = new Date(finalData.datetime);
         const hour = time.getHours();
         if (!(finalData.name && finalData.datetime && finalData.capacity)) {
-            alert("Введите все данные");
+            setModal({
+                isOpen: true,
+                title: "Ошибка",
+                content: <ChildrenAlert message="Пожалуйста, заполните все обязательные поля" onClose={closeModal} />
+            });
         } else if (hour >= 23 || hour < 5) {
-            alert("Нельзя создавать события в это время");
+            setModal({
+                isOpen: true,
+                title: "Ошибка",
+                content: <ChildrenAlert message="Нельзя создавать события в это время" onClose={closeModal} />
+            });
         } else {
             try {
                 await eventRequest.create(finalData);
-                alert("Событие создано!");
+                setModal({
+                    isOpen: true,
+                    title: "Успех",
+                    content: <ChildrenAlert message="Событие успешно создано!" onClose={closeModal} />
+                });
             } catch {
-                alert("Произошла ошибка при создании события");
+                setModal({
+                    isOpen: true,
+                    title: "Ошибка",
+                    content: <ChildrenAlert message="Произошла ошибка при создании события" onClose={closeModal} />
+                });
             }
         }
     };
@@ -74,6 +96,11 @@ const NewEventCard = ({position}) => {
                     value="Начать созыв!" onClick={handleCreate}
                 />
             </form>
+            {modal.isOpen && (
+                <Dialog title={modal.title} onClose={closeModal}>
+                    {modal.content}
+                </Dialog>
+            )}
         </Popup>
     );
 }

@@ -1,27 +1,40 @@
+:root {
+    --primary-color: green;
+    --primary-gradient: #03bb93;
+    --negative-color: rgb(206, 47, 47);
+    --negative-gradient: rgb(255, 94, 0);
+    --neutral-color: gray;
+    --neutral-hover: rgb(0,0,0,0.1);
+    --background-sidebar: rgb(246, 246, 246);
+    --links-color: #007bff;
+    --links-hover-color: #0056b3;
+}
+
 .button {
     width: auto;
     padding: 5px 20px 5px 20px;
     font-size: 20px;
     color: white;
     border-radius: 10px;
+    transition: background-color 0.3s;
 }
 
 .button--to-go {
-    background-color: green;
+    background-color: var(--primary-color);
 }
     .button--to-go:hover {
-        background-color: rgb(2, 182, 182);
+        background-color: var(--primary-gradient);
     }
     .button--to-go:disabled {
         opacity: 25%;
-        background-color: gray;
+        background-color: var(--neutral-color);
     }
 
 .button--negative {
-    background-color: rgb(206, 47, 47);
+    background-color: var(--negative-color);
 }
     .button--negative:hover {
-        background-color: rgb(255, 94, 0);
+        background-color: var(--negative-gradient);
     }
 
 .leaflet-popup-content {
@@ -36,4 +49,8 @@
     width: 320px; 
     border-radius: 20px; 
     padding: 16px;
+}
+
+@media (max-width: 500px) {
+    .button { transition: 0s; }
 }

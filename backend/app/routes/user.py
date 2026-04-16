@@ -22,7 +22,6 @@ COOKIE_SETTINGS = {
     "httponly": True,
     "samesite": "lax",
     # "secure": True, # prod
-    "max_age": TOKEN_LIFESPAN["refresh"]
 }
 
 
@@ -34,7 +33,7 @@ async def register(data: RegisterRequest, response: Response, db: AsyncSession =
     user_id = await register_user(data=data, session=db)
 
     tokens = create_both_tokens(user_id=user_id)
-    response.set_cookie(value=tokens["refresh"], **COOKIE_SETTINGS)
+    response.set_cookie(value=tokens["refresh"], max_age=TOKEN_LIFESPAN["refresh"], **COOKIE_SETTINGS)
     return {"token": tokens["access"]}
 
 
@@ -43,14 +42,14 @@ async def login(data: LoginRequest, response: Response, db: AsyncSession = Depen
     user_id = await authenticate_user(data=data, session=db)
 
     tokens = create_both_tokens(user_id=user_id)
-    response.set_cookie(value=tokens["refresh"], **COOKIE_SETTINGS)
+    response.set_cookie(value=tokens["refresh"], max_age=TOKEN_LIFESPAN["refresh"], **COOKIE_SETTINGS)
     return {"token": tokens["access"]}
 
 
 @router.get("/refresh")
 async def refresh(response: Response, payload = Depends(verify_refresh_token)):
     tokens = create_both_tokens(user_id=int(payload["sub"]))
-    response.set_cookie(value=tokens["refresh"], **COOKIE_SETTINGS)
+    response.set_cookie(value=tokens["refresh"], max_age=TOKEN_LIFESPAN["refresh"], **COOKIE_SETTINGS)
     return {"token": tokens["access"]}
 
 
@@ -73,5 +72,5 @@ async def edit_user(data: EditUserInfoRequest,
 async def handle_delete_user(response: Response, payload = Depends(verify_access_token),
                       db: AsyncSession = Depends(get_db)):
     await delete_user(user_id=int(payload["sub"]), session=db)
-    response.delete_cookie("refresh")
+    response.delete_cookie(**COOKIE_SETTINGS)
     return {"message": "Delete successful"}

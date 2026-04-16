@@ -1,9 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './Dialog.css';
+import { useModal } from './ModalContext';
 
 
 export const ChildrenAlert = ({message, onClose}) => {
+    const { closeModal } = useModal();
+    if (!onClose) onClose = closeModal;
     return (
         <div className="alert-children">
             <p>{message}</p>
@@ -13,6 +16,9 @@ export const ChildrenAlert = ({message, onClose}) => {
 }
 
 export const ChildrenConfirm = ({message, onConfirm, onCancel}) => {
+    const { closeModal } = useModal();
+    if (!onConfirm) onConfirm = closeModal;
+    if (!onCancel) onCancel = closeModal;
     return (
         <div className="confirm-children">
             <p>{message}</p>

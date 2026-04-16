@@ -38,9 +38,9 @@ def verify_refresh_token(token: str = Cookie(None, alias="refresh")) -> dict:
     payload = validate_token(token)
 
     if payload["type"] != 'refresh':
-        raise HTTPException(status_code=401, detail="Access token required")
+        raise HTTPException(status_code=401, detail="Refresh token required")
     
-    return validate_token(token)
+    return payload
 
 
 # I should probably do enum for token_type

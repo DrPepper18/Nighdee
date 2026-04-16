@@ -3,22 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import './Register.css';
 import { userRequest } from "../../api";
 import { calculateAge } from '../../utils/DateFucntions';
-import { Dialog, ChildrenAlert } from '../../components/Dialog/Dialog.jsx';
+import { ChildrenAlert } from '../../components/Dialog/Dialog.jsx';
+import { useModal } from '../../components/Dialog/ModalContext';
 
 
 const RegScreen = () => {
     const navigate = useNavigate();
+    const { openModal } = useModal();
     const [nickname, setNickname] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [birthdate, setBirthdate] = useState('');
     const [consent, setConsent] = useState(false);
-    const [modal, setModal] = useState({ 
-            isOpen: false, 
-            title: '', 
-            content: null 
-        });
-    const closeModal = () => setModal({ ...modal, isOpen: false });
     const PRIVACY_LINK = 
     "https://docs.google.com/document/d/11QdpZhEwXqzgPyeY6tpTM_JyKh28AqKz5OHvJetl2Gg/edit?usp=sharing";
 
@@ -29,28 +25,16 @@ const RegScreen = () => {
 
     const handleRegister = async () => {
         if (!consent) {
-            setModal({
-                isOpen: true,
-                title: "Ошибка",
-                content: <ChildrenAlert message="Вы должны согласиться с Политикой и Правилами сервиса" onClose={closeModal} />
-            });
+            openModal("Ошибка", <ChildrenAlert message="Вы должны согласиться с Политикой и Правилами сервиса" />);
             return;
         }
         if (!validateEmail(email)) {
-            setModal({
-                isOpen: true,
-                title: "Ошибка",
-                content: <ChildrenAlert message="Некорректный формат почты" onClose={closeModal} />
-            });
+            openModal("Ошибка", <ChildrenAlert message="Некорректный формат почты" />);
             return;
         }
         const age = calculateAge(birthdate);
         if (age < 18 || age > 100) {
-            setModal({
-                isOpen: true,
-                title: "Ошибка",
-                content: <ChildrenAlert message="Для регистрации в сервисе Вам должно быть больше 18 лет." onClose={closeModal} />
-            });
+            openModal("Ошибка", <ChildrenAlert message="Для регистрации в сервисе Вам должно быть больше 18 лет." />);
             return;
         }
         const user = {
@@ -64,11 +48,7 @@ const RegScreen = () => {
             await userRequest.register(user);
             navigate('/');
         } catch (error) {
-            setModal({
-                isOpen: true,
-                title: "Ошибка",
-                content: <ChildrenAlert message={error.response.data.detail || "Произошла ошибка при регистрации"} onClose={closeModal} />
-            });
+            openModal("Ошибка", <ChildrenAlert message={error.response.data.detail || "Произошла ошибка при регистрации"} />);
         }
     };
 
@@ -124,11 +104,6 @@ const RegScreen = () => {
 				value="Log in"
 				onClick={() => navigate('/login')}
 			/>
-            {modal.isOpen && (
-                <Dialog title={modal.title} onClose={closeModal}>
-                    {modal.content}
-                </Dialog>
-            )}
         </div>
     );
 };

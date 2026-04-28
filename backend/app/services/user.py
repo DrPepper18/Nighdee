@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 import sqlalchemy as db
 from sqlalchemy.exc import IntegrityError
 from app.models.models import User, Booking
@@ -13,8 +13,8 @@ async def register_user(data: RegisterRequest, session: AsyncSession) -> str:
     existing_user = result.scalar_one_or_none()
     if existing_user:
         raise HTTPException(
-            status_code=409, 
-            detail="Пользователь с таким email уже зарегистрирован"
+            status_code=status.HTTP_409_CONFLICT,
+            detail="User with this email is already exists"
         )
 
     password_hash = create_password_hash(password=data.password)
@@ -30,7 +30,10 @@ async def register_user(data: RegisterRequest, session: AsyncSession) -> str:
         await session.commit()
     except IntegrityError as e:
         session.rollback()
-        raise HTTPException(status_code=500, detail="Ошибка при сохранении в базу")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail="Internal Server Error"
+        )
     
     return new_user.id
 
@@ -41,7 +44,10 @@ async def get_password_hash(email: str, session: AsyncSession) -> bytes:
     user_data = result.scalars().first()
 
     if not user_data:
-        raise HTTPException(status_code=404, detail="Not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="Not found"
+        )
 
     return user_data.password_hash
 
@@ -51,7 +57,10 @@ async def authenticate_user(data: LoginRequest, session: AsyncSession) -> str:
     success = is_password_correct(data.password, password_hash)
 
     if not success:
-        raise HTTPException(status_code=401, detail="Invalid email or password")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail="Invalid email or password"
+        )
     
     query_select = db.select(User.id).where(User.email == data.email)
     result = await session.execute(query_select)

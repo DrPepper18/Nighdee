@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Response, Depends
+from fastapi import APIRouter, Response, Depends, status
 from app.models.database import AsyncSession, get_db
 from app.services.user import (
     register_user,
@@ -28,7 +28,7 @@ COOKIE_SETTINGS = {
 router = APIRouter(prefix='/auth')
 
 
-@router.post("/register", status_code=201)
+@router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(data: RegisterRequest, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await register_user(data=data, session=db)
 
@@ -37,7 +37,7 @@ async def register(data: RegisterRequest, response: Response, db: AsyncSession =
     return {"token": tokens["access"]}
 
 
-@router.post("/login")
+@router.post("/login", status_code=status.HTTP_200_OK)
 async def login(data: LoginRequest, response: Response, db: AsyncSession = Depends(get_db)):
     user_id = await authenticate_user(data=data, session=db)
 
@@ -46,21 +46,21 @@ async def login(data: LoginRequest, response: Response, db: AsyncSession = Depen
     return {"token": tokens["access"]}
 
 
-@router.get("/refresh")
+@router.get("/refresh", status_code=status.HTTP_200_OK)
 async def refresh(response: Response, payload = Depends(verify_refresh_token)):
     tokens = create_both_tokens(user_id=int(payload["sub"]))
     response.set_cookie(value=tokens["refresh"], max_age=TOKEN_LIFESPAN["refresh"], **COOKIE_SETTINGS)
     return {"token": tokens["access"]}
 
 
-@router.get("/")
+@router.get("/", status_code=status.HTTP_200_OK)
 async def get_user(payload = Depends(verify_access_token),
                    db: AsyncSession = Depends(get_db)):
     user_info = await get_user_info(user_id=int(payload["sub"]), session=db)
     return user_info
 
 
-@router.patch("/")
+@router.patch("/", status_code=status.HTTP_200_OK)
 async def edit_user(data: EditUserInfoRequest,
                     payload = Depends(verify_access_token),
                     db: AsyncSession = Depends(get_db)):
@@ -68,7 +68,7 @@ async def edit_user(data: EditUserInfoRequest,
     return {"message": "Patch successful"}
 
 
-@router.delete("/")
+@router.delete("/", status_code=status.HTTP_200_OK)
 async def handle_delete_user(response: Response, payload = Depends(verify_access_token),
                       db: AsyncSession = Depends(get_db)):
     await delete_user(user_id=int(payload["sub"]), session=db)

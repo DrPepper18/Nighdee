@@ -12,7 +12,7 @@ CAPACITY_LIMIT = 16
 
 def validate_age(birthdate):
     if calculate_age(birthdate) < AGE_LIMIT:
-        raise ValueError("Сервис предназначен для лиц старше 18 лет")
+        raise ValueError("Service is intended for persons over 18 years old")
     return birthdate
 
 
@@ -45,19 +45,19 @@ class EventPostRequest(BaseModel):
     @model_validator(mode='after')
     def validate_ages(self):
         if self.min_age and self.max_age and self.min_age > self.max_age:
-            raise ValueError('Минимальный возраст не может быть больше максимального')
+            raise ValueError('Minimum age cannot be greater than maximum age')
         return self
     
     @model_validator(mode='after')
     def validate_datetime(self):
         if self.datetime.replace(tzinfo=None) < datetime.now():
-            raise ValueError('Нельзя создать событие в прошлом')
+            raise ValueError('Cannot create an event in the past')
         if self.datetime.hour >= CURFEW_BEGIN or self.datetime.hour < CURFEW_END:
-            raise ValueError('Нельзя создавать события в период 23:00-05:00')
+            raise ValueError('Cannot create events during curfew hours 23:00-05:00')
         return self
     
     @model_validator(mode="after")
     def validate_capacity(self):
         if self.capacity < 1 or self.capacity > CAPACITY_LIMIT:
-            raise ValueError('Некорректное количество человек')
+            raise ValueError(f'Invalid number of people. Capacity must be between 1 and {CAPACITY_LIMIT}')
         return self

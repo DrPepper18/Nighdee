@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from app.models.database import AsyncSession, get_db
 from app.services.booking import (
     get_join_status,
@@ -11,7 +11,7 @@ from app.utils.security import verify_access_token
 router = APIRouter(prefix='/book')
 
 
-@router.post("/{event_id}")
+@router.post("/{event_id}", status_code=status.HTTP_201_CREATED)
 async def join_event(event_id: int, 
                      payload = Depends(verify_access_token), 
                      db: AsyncSession = Depends(get_db)):
@@ -19,7 +19,7 @@ async def join_event(event_id: int,
     return {"message": "POST request is completed"}
 
 
-@router.delete("/{event_id}")
+@router.delete("/{event_id}", status_code=status.HTTP_200_OK)
 async def cancel_join(event_id: int, 
                      payload = Depends(verify_access_token), 
                      db: AsyncSession = Depends(get_db)):
@@ -27,7 +27,7 @@ async def cancel_join(event_id: int,
     return {"message": "DELETE request is completed"}
     
 
-@router.get("/{event_id}")
+@router.get("/{event_id}", status_code=status.HTTP_200_OK)
 async def check_event_join(event_id: int, 
                            payload = Depends(verify_access_token), 
                            db: AsyncSession = Depends(get_db)):    

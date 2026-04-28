@@ -1,6 +1,6 @@
 import asyncio
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.routes import user, event
@@ -52,7 +52,7 @@ app.include_router(event.router)
 app.include_router(booking.router)
 
 
-@app.get("/health")
+@app.get("/health", status_code=status.HTTP_200_OK)
 def health_check():
     return {"status": "ok"}
 

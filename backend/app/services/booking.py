@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 import sqlalchemy as db
 from app.models.models import Booking
 from app.models.database import AsyncSession
@@ -40,11 +40,20 @@ async def join_user_to_event(event_id: int, user_id: int, session: AsyncSession)
     user_age = calculate_age(user.birthdate)
 
     if not event:
-        raise HTTPException(status_code=404, detail="Событие не найдено")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="Event is not found"
+        )
     if not((not event.min_age or event.min_age <= user_age) and (not event.max_age or user_age <= event.max_age)):
-        raise HTTPException(status_code=403, detail="Возраст не подходит")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Age is not suitable"
+        )
     if not (event.capacity > event_load):
-        raise HTTPException(status_code=409, detail="Мест нет")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, 
+            detail="No slots available"
+        )
 
     await register_join(event_id=event_id, user_id=user_id, session=session)
 

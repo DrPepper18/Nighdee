@@ -2,12 +2,33 @@ import pytest
 from httpx import AsyncClient
 from datetime import datetime, timedelta
 from app.utils.date_functions import calculate_birthdate
+from fastapi import status
 
 @pytest.mark.parametrize("name, datetime, min_age, max_age, status_code", [
-    ("", (datetime.now()+timedelta(days=1)).isoformat(), None, None, 422),
-    ("Настолки в Парке Горького", (datetime.now()-timedelta(days=1)).isoformat(), None, None, 422),
-    ("Настолки в Парке Горького", (datetime.now()+timedelta(days=1)).isoformat(), 50, 40, 422),
-    ("Настолки в Парке Горького", (datetime.now()+timedelta(days=1)).isoformat(), 18, None, 201),
+    (
+        "", 
+        (datetime.now()+timedelta(days=1)).isoformat(), 
+        None, None, 
+        status.HTTP_422_UNPROCESSABLE_ENTITY
+    ),  # Empty name == 422
+    (
+        "Настолки в Парке Горького", 
+        (datetime.now()-timedelta(days=1)).isoformat(), 
+        None, None, 
+        status.HTTP_422_UNPROCESSABLE_ENTITY
+    ),
+    (
+        "Настолки в Парке Горького", 
+        (datetime.now()+timedelta(days=1)).isoformat(), 
+        50, 40, 
+        status.HTTP_422_UNPROCESSABLE_ENTITY
+    ),
+    (
+        "Настолки в Парке Горького", 
+        (datetime.now()+timedelta(days=1)).isoformat(), 
+        18, None, 
+        status.HTTP_201_CREATED
+    ),
 ])
 @pytest.mark.asyncio
 async def test_event_create(client: AsyncClient, name: str, datetime: str, min_age: int, max_age: int, status_code: int):
@@ -66,9 +87,18 @@ async def test_event_join(client: AsyncClient):
     event_id = response.json()["event_id"]
 
     parameters = [
-        {"token": tokens[1], "status_code": 403},   # Возраст ниже положенного == 403
-        {"token": tokens[2], "status_code": 200},   # OK == 200
-        {"token": tokens[3], "status_code": 409}    # Мест нет == 409
+        {
+            "token": tokens[1], 
+            "status_code": status.HTTP_403_FORBIDDEN
+        }, # Underage == 403
+        {
+            "token": tokens[2], 
+            "status_code": status.HTTP_201_CREATED
+        }, # OK == 201
+        {
+            "token": tokens[3], 
+            "status_code": status.HTTP_409_CONFLICT
+        } # No slots available == 409
     ]
 
     for param in parameters:  

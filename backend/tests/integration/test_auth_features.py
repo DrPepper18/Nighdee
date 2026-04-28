@@ -1,6 +1,7 @@
 import pytest
 from httpx import AsyncClient
 from app.utils.date_functions import calculate_birthdate
+from fastapi import status
 
 users = [
     {
@@ -30,10 +31,10 @@ users = [
 ]
 
 @pytest.mark.parametrize("user, status_code", [
-    (users[0], 422),    # Пустые поля == 422
-    (users[1], 422),    # email не в формате почты == 422
-    (users[2], 422),    # Несовершеннолетний == 422
-    (users[3], 201)     # OK == 201
+    (users[0], status.HTTP_422_UNPROCESSABLE_ENTITY),       # Empty spaces == 422
+    (users[1], status.HTTP_422_UNPROCESSABLE_ENTITY),       # Email not in email format == 422
+    (users[2], status.HTTP_422_UNPROCESSABLE_ENTITY),       # Underage == 422
+    (users[3], status.HTTP_201_CREATED)                     # OK == 201
 ])
 @pytest.mark.asyncio
 async def test_auth_register(client: AsyncClient, user, status_code):
@@ -46,22 +47,34 @@ async def test_auth_register_duplicate(client: AsyncClient):
     user = users[3]
     await client.post('/api/auth/register', json=user)
     response = await client.post('/api/auth/register', json=user)
-    assert response.status_code == 409
+    assert response.status_code == status.HTTP_409_CONFLICT
 
 
 @pytest.mark.parametrize("user, status_code", [
-    # Пустые поля
-    ({"email": "", "password": ""}, 422),
-    # Несуществующий
-    ({"email": "ghost@exists.not", "password": "password123"}, 404),
-    # Неверный пароль
-    ({"email": "wrongpass@mail.ru", "password": "correct_pass", "attempt": "wrong_pass"}, 401),
-    # Успех
-    ({"email": "good@user.ru", "password": "password123", "attempt": "password123"}, 200)
+    # Empty fields
+    (
+        {"email": "", "password": ""}, 
+        status.HTTP_422_UNPROCESSABLE_ENTITY
+    ),
+    # Non-existent user
+    (
+        {"email": "ghost@exists.not", "password": "password123"}, 
+        status.HTTP_404_NOT_FOUND
+    ),
+    # Incorrect password
+    (
+        {"email": "wrongpass@mail.ru", "password": "correct_pass", "attempt": "wrong_pass"}, 
+        status.HTTP_401_UNAUTHORIZED
+    ),
+    # Success
+    (
+        {"email": "good@user.ru", "password": "password123", "attempt": "password123"}, 
+        status.HTTP_200_OK
+    )
 ])
 @pytest.mark.asyncio
 async def test_auth_login(client: AsyncClient, user, status_code):
-    if status_code in [401, 200]:
+    if status_code in [status.HTTP_401_UNAUTHORIZED, status.HTTP_200_OK]:
         await client.post('/api/auth/register', json={
             "email": user["email"], 
             "password": user["password"],
@@ -111,4 +124,4 @@ async def test_tokens_refresh(client: AsyncClient):
     
     client.cookies.clear()
     response = await client.get('/api/auth/refresh')
-    assert response.status_code == 401
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED

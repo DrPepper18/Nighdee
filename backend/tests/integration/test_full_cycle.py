@@ -2,6 +2,7 @@ import pytest
 from httpx import AsyncClient
 from datetime import datetime, timedelta
 from app.utils.date_functions import calculate_birthdate
+from fastapi import status
 
 
 @pytest.mark.asyncio
@@ -17,14 +18,14 @@ async def test_full_cycle(client: AsyncClient):
     for user in users:
         # Registration
         response = await client.post('/api/auth/register', json=user)
-        assert response.status_code == 201
+        assert response.status_code == status.HTTP_201_CREATED
 
         # Login
         response = await client.post('/api/auth/login', json={
             "email": user["email"],
             "password": user["password"]
         })
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         token = response.json()["token"]
         tokens.append(token)
     
@@ -43,14 +44,14 @@ async def test_full_cycle(client: AsyncClient):
                                     headers={"Authorization": f"Bearer {tokens[0]}"}, 
                                     json=event
     )
-    assert response.status_code == 201
+    assert response.status_code == status.HTTP_201_CREATED
     event_id = response.json()["event_id"]
     assert event_id
     
 
     # Join the event (failed: too young)
     response = await client.post(f'/api/book/{event_id}', headers={"Authorization": f"Bearer {tokens[2]}"})
-    assert response.status_code == 403
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
     # Check participation (expect: false)
     response = await client.get(f'/api/book/{event_id}', headers={"Authorization": f"Bearer {tokens[2]}"})

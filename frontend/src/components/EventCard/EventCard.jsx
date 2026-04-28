@@ -26,15 +26,15 @@ const EventCard = ({event}) => {
                 setIsJoined(true);
                 event.participants_count += 1;
                 openModal("Успех", <ChildrenAlert message="Вы записаны!" />);
-                // Лучше модальные окна пока не убирать - они замедляют присоединение к событию.
-                // Не будет кайфоломов, которые будут регаться на все подряд и никуда не приходить
-                // Участие будет более осознанное
+                // Better not remove modal windows - they slow down the process of joining events.
+                // There won't be any party-poopers who sign up for everything and never show up
+                // Participation will be more conscious
             } else {
                 await bookingRequest.cancel(event.id);
                 setIsJoined(false);
                 event.participants_count -= 1;
                 openModal("Успех", <ChildrenAlert message="Вы отказались от события..." />);
-                // Аналогично...
+                // Same thing...
             }
             
         } catch {

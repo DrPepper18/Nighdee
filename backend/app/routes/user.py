@@ -7,11 +7,17 @@ from app.services.user import (
     update_user_info,
     delete_user
 )
-from app.schemas import RegisterRequest, LoginRequest, EditUserInfoRequest
+from app.schemas.user import (
+    RegisterRequest,
+    LoginRequest,
+    EditUserInfoRequest,
+    UserServiceResponse,
+    TokenServiceResponse
+)
 from app.utils.security import (
-    verify_access_token, 
-    verify_refresh_token, 
-    create_both_tokens, 
+    verify_access_token,
+    verify_refresh_token,
+    create_both_tokens,
     TOKEN_LIFESPAN
 )
 
@@ -34,7 +40,11 @@ async def register(data: RegisterRequest, response: Response, db: AsyncSession =
 
     tokens = create_both_tokens(user_id=user_id)
     response.set_cookie(value=tokens["refresh"], max_age=TOKEN_LIFESPAN["refresh"], **COOKIE_SETTINGS)
-    return {"token": tokens["access"]}
+    
+    return TokenServiceResponse(
+        token=tokens["access"],
+        message="User successfully registered"
+    )
 
 
 @router.post("/login", status_code=status.HTTP_200_OK)
@@ -43,14 +53,22 @@ async def login(data: LoginRequest, response: Response, db: AsyncSession = Depen
 
     tokens = create_both_tokens(user_id=user_id)
     response.set_cookie(value=tokens["refresh"], max_age=TOKEN_LIFESPAN["refresh"], **COOKIE_SETTINGS)
-    return {"token": tokens["access"]}
+    
+    return TokenServiceResponse(
+        token=tokens["access"],
+        message="User successfully authenticated"
+    )
 
 
 @router.get("/refresh", status_code=status.HTTP_200_OK)
 async def refresh(response: Response, payload = Depends(verify_refresh_token)):
     tokens = create_both_tokens(user_id=int(payload["sub"]))
     response.set_cookie(value=tokens["refresh"], max_age=TOKEN_LIFESPAN["refresh"], **COOKIE_SETTINGS)
-    return {"token": tokens["access"]}
+    
+    return TokenServiceResponse(
+        token=tokens["access"],
+        message="Token successfully refreshed"
+    )
 
 
 @router.get("/", status_code=status.HTTP_200_OK)
@@ -65,7 +83,11 @@ async def edit_user(data: EditUserInfoRequest,
                     payload = Depends(verify_access_token),
                     db: AsyncSession = Depends(get_db)):
     await update_user_info(data=data, user_id=int(payload["sub"]), session=db)
-    return {"message": "Patch successful"}
+    
+    return UserServiceResponse(
+        user_id=int(payload["sub"]),
+        message="Patch successful"
+    )
 
 
 @router.delete("/", status_code=status.HTTP_200_OK)
@@ -73,4 +95,8 @@ async def handle_delete_user(response: Response, payload = Depends(verify_access
                       db: AsyncSession = Depends(get_db)):
     await delete_user(user_id=int(payload["sub"]), session=db)
     response.delete_cookie(**COOKIE_SETTINGS)
-    return {"message": "Delete successful"}
+    
+    return UserServiceResponse(
+        user_id=int(payload["sub"]),
+        message="User successfully deleted"
+    )

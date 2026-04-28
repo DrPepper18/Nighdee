@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from app.models.models import User, Booking
 from app.models.database import AsyncSession
 from app.utils.security import create_password_hash, is_password_correct
-from app.schemas import RegisterRequest, LoginRequest, EditUserInfoRequest
+from app.schemas.user import RegisterRequest, LoginRequest, EditUserInfoRequest
 
 
 async def register_user(data: RegisterRequest, session: AsyncSession) -> str:

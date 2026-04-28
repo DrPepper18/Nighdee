@@ -55,4 +55,4 @@ async def test_full_cycle(client: AsyncClient):
 
     # Check participation (expect: false)
     response = await client.get(f'/api/book/{event_id}', headers={"Authorization": f"Bearer {tokens[2]}"})
-    assert not response.json()["joined"]
+    assert not response.json()["is_joined"]

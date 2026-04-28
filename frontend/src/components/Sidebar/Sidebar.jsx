@@ -13,7 +13,7 @@ const Sidebar = () => {
     const handleClick = () => setHidden(!hidden);
     const [nickname, setNickname] = useState('');
     const [birthdate, setBirthdate] = useState('');
-    const { openModal } = useModal();
+    const { closeModal, openModal } = useModal();
     const PRIVACY_LINK = 
     "https://docs.google.com/document/d/11QdpZhEwXqzgPyeY6tpTM_JyKh28AqKz5OHvJetl2Gg/edit?usp=sharing";
     
@@ -37,6 +37,7 @@ const Sidebar = () => {
                 message="Ваш аккаунт будет удалён безвозвратно. Вы уверены?" 
                 onConfirm={async () => {
                     await userRequest.delete();
+                    closeModal();
                     navigate('/login');
                 }}
             />

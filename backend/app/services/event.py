@@ -3,7 +3,7 @@ from sqlalchemy import or_, and_
 from datetime import datetime
 from app.models.models import User, Event, Booking
 from app.models.database import AsyncSession
-from app.schemas import EventPostRequest
+from app.schemas.event import EventPostRequest
 from app.utils.date_functions import calculate_age
 
 

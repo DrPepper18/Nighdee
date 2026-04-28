@@ -112,6 +112,6 @@ export const bookingRequest = class {
     
     static checkStatus = withErrorHandling(async (event_id) => {
         const response = await api.get(`/book/${event_id}`);
-        return response.data.joined;
+        return response.data.is_joined;
     });
 };

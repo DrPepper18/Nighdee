@@ -6,20 +6,21 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './Map.css';
 
-import icon from 'leaflet/dist/images/marker-icon.png';
+import redIconUrl from '../../assets/marker-icon-2x-red.png';
+import blueIcon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
 
 
 let DefaultIcon = L.icon({
-    iconUrl: icon,
+    iconUrl: blueIcon,
     shadowUrl: iconShadow,
     iconSize: [25, 41],
     iconAnchor: [12, 41]
 });
 
 const redIcon = new L.Icon({
-  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+  iconUrl: redIconUrl,
   shadowUrl: iconShadow,
   iconSize: [25, 41],
   iconAnchor: [12, 41],
@@ -79,10 +80,6 @@ const Map = ({ events }) => {
                 ref={setMap}
                 style={{ height: "100%", width: "100%" }}
             >
-                <TileLayer
-                    attribution='&copy; OpenStreetMap'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
 
                 <MapEventsHandler setCenter={setMapCenter} />
 
@@ -101,6 +98,12 @@ const Map = ({ events }) => {
                         <EventCard event={event}/>
                     </Marker>
                 ))}
+
+                <TileLayer
+                    attribution='&copy; OpenStreetMap'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+
             </MapContainer>
         </div>
     );

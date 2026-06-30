@@ -6,7 +6,6 @@
     margin: 0;
     padding: 16px;
     box-sizing: border-box;
-    overflow-y: auto;
     transition: width 0.3s;
 }
 .sidebar--open { width: 35vw; }
@@ -15,7 +14,7 @@
 .sidebar__content > .content-block { margin-bottom: 16px; }
 .sidebar__button { padding: 0; }
 .sidebar__button:hover { background-color: var(--neutral-hover); }
-ul { padding-left: 16px; }
+ul, ol { padding-left: 16px; }
 li { margin: 4px; }
 footer {
     position: absolute; 

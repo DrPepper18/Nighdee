@@ -1,7 +1,7 @@
 import jwt
 import bcrypt
 import time
-from fastapi import HTTPException, Depends, Cookie
+from fastapi import HTTPException, Depends, Cookie, status
 from fastapi.security import OAuth2PasswordBearer
 from app.config import SECRET_TOKEN
 
@@ -17,20 +17,32 @@ def validate_token(token: str) -> dict:
     try:
         payload = jwt.decode(token, SECRET_TOKEN, algorithms=["HS256"])
         if not payload:
-            raise HTTPException(status_code=401, detail="Unauthorized")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, 
+                detail="Unauthorized"
+            )
         return payload
     except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expired")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token expired"
+        )
     except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail="Invalid token"
+        )
+
 
 def verify_access_token(token: str = Depends(oauth2_scheme)) -> dict:
     payload = validate_token(token)
 
     if payload["type"] != 'access':
-        raise HTTPException(status_code=401, detail="Access token required")
-    
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Access token required"
+        )
+
     return payload
 
 
@@ -38,8 +50,11 @@ def verify_refresh_token(token: str = Cookie(None, alias="refresh")) -> dict:
     payload = validate_token(token)
 
     if payload["type"] != 'refresh':
-        raise HTTPException(status_code=401, detail="Refresh token required")
-    
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token required"
+        )
+
     return payload
 
 

@@ -12,6 +12,7 @@ class User(Base):
     password_hash = sa.Column(sa.LargeBinary())
     name = sa.Column(sa.String())
     birthdate = sa.Column(sa.Date())
+    is_introduced = sa.Column(sa.Boolean(), nullable=False, server_default=sa.text("false"))
 
 
 class Event(Base):

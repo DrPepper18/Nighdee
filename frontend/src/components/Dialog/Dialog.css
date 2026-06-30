@@ -15,7 +15,8 @@
     animation: fadeIn 0.3s forwards;
 }
 .dialog {
-    width: 320px;
+    min-width: 320px;
+    max-width: 500px;
     padding: 16px;
     border-radius: 20px;
     background-color: var(--background-sidebar);

@@ -9,7 +9,7 @@ export const ChildrenAlert = ({message, onClose}) => {
     if (!onClose) onClose = closeModal;
     return (
         <div className="alert-children">
-            <p>{message}</p>
+            <div>{message}</div>
             <input className="button full-width" type="button" value="OK" onClick={onClose}/>
         </div>
     );

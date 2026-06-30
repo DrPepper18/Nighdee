@@ -82,7 +82,8 @@ async def update_user_info(data: EditUserInfoRequest, user_id: int, session: Asy
         .where(User.id == user_id)
         .values(
             name=data.name,
-            birthdate=data.birthdate
+            birthdate=data.birthdate,
+            is_introduced=data.is_introduced
         )
     )
     await session.execute(query_select)

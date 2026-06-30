@@ -13,6 +13,7 @@ const Sidebar = () => {
     const handleClick = () => setHidden(!hidden);
     const [nickname, setNickname] = useState('');
     const [birthdate, setBirthdate] = useState('');
+    const [isIntroduced, setIsIntroduced] = useState(false);
     const { closeModal, openModal } = useModal();
     const PRIVACY_LINK = 
     "https://docs.google.com/document/d/11QdpZhEwXqzgPyeY6tpTM_JyKh28AqKz5OHvJetl2Gg/edit?usp=sharing";
@@ -23,7 +24,7 @@ const Sidebar = () => {
             return;
         }
         try {
-            await userRequest.updateInfo(nickname, birthdate);
+            await userRequest.updateInfo(nickname, birthdate, true);
             openModal("Успех", <ChildrenAlert message="Данные сохранены" />);
         } catch (error) {
             openModal("Ошибка", <ChildrenAlert message="Произошла ошибка при сохранении данных" />);
@@ -46,12 +47,34 @@ const Sidebar = () => {
     }
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            let userData = await userRequest.getInfo();
+        const initUser = async () => {
+            const userData = await userRequest.getInfo();
+            
             setNickname(userData["name"]);
             setBirthdate(userData["birthdate"]);
-        }
-        fetchUserData();
+            setIsIntroduced(userData["is_introduced"]);
+
+            if (userData["is_introduced"] === false) {
+                openModal("Знакомьтесь безопасно", (
+                    <ChildrenAlert message={
+                        <div>
+                            <ul>
+                                <li>Предупреждайте близких о том, куда и с кем идёте гулять</li>
+                                <li>Встречайтесь в людных местах</li>
+                                <li>Избегайте скромных переулков</li>
+                                <li>Не принимайте и не отдавайте деньги</li>
+                                <li>Не садитесь в машину и не заходите домой</li>
+                                <li>Не бойтесь говорить НЕТ</li>
+                            </ul>
+                            <p>(Не волнуйтесь, это сообщение больше всплывать не будет. Просто напоминание.)</p>
+                        </div>
+                    } />
+                ));
+                await userRequest.updateInfo(userData["name"], userData["birthdate"], true);
+            }
+        };
+
+        initUser();
     }, []);
 
     return (
@@ -81,15 +104,18 @@ const Sidebar = () => {
                     />
                 </div>
                 <div className='content-block'>
-                    <h2>Памятка</h2>
-                    <ul>
-                        <li>Предупреждайте близких о том, куда и с кем идёте гулять</li>
-                        <li>Встречайтесь в людных местах</li>
-                        <li>Избегайте скромных переулков</li>
-                        <li>Не принимайте и не отдавайте деньги</li>
-                        <li>Не садитесь в машину и не заходите домой</li>
-                        <li>Не бойтесь говорить НЕТ</li>
-                    </ul>
+                    <h2>Гайд</h2>
+                    <h3>Организатор</h3>
+                    <ol>
+                        <li>Наведите красный маркер на нужное вам место</li>
+                        <li>Нажмите на него, чтобы открыть форму создания события</li>
+                        <li>Заполните форму и нажмите "Создать"</li>
+                    </ol>
+                    <h3>Участник</h3>
+                    <ol>
+                        <li>Чтобы забронировать место, нажмите на синий маркер и выберите "Я приду"</li>
+                        <li>Если передумали, нажмите на тот же маркер и выберите "Я не приду"</li>
+                    </ol>
                 </div>
                 <footer className='content-block'>
                     <p><a href={PRIVACY_LINK}>Политика и Правила сервиса</a></p>

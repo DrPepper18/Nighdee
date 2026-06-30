@@ -28,6 +28,7 @@ class LoginRequest(BaseModel):
 class EditUserInfoRequest(BaseModel):
     name: str
     birthdate: Annotated[datetime, AfterValidator(validate_age)]
+    is_introduced: bool
 
 
 class TokenServiceResponse(BaseModel):

@@ -75,8 +75,8 @@ export const userRequest = class {
         return response.data;
     });
 
-    static updateInfo = withErrorHandling(async (name, birthdate) => {
-        const response = await api.patch('/auth/', {name, birthdate});
+    static updateInfo = withErrorHandling(async (name, birthdate, is_introduced) => {
+        const response = await api.patch('/auth/', {name, birthdate, is_introduced});
         return response.data;
     });
 

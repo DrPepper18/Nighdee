@@ -19,7 +19,7 @@ input {
     color-scheme: var(--color-scheme);
     box-sizing: border-box;
     font-size: 20px;
-    background-color: transparent;
+    background-color: var(--background-sidebar);
     color: var(--text-color);
     border: 0;
     border-radius: 20px;

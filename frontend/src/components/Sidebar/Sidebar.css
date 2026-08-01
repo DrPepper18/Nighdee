@@ -14,8 +14,22 @@
 .sidebar__content > .content-block { margin-bottom: 16px; }
 .sidebar__button { padding: 0; }
 .sidebar__button:hover { background-color: var(--neutral-hover); }
+
+.tab {
+    color: gray;
+    cursor: pointer;
+}
+.tab:hover { text-decoration: underline; }
+.tab__current { color: var(--text-color); }
+
+.hint-window {
+    background-color: var(--neutral-color);
+    padding: 4px; 
+    border-radius: 16px;
+}
+.hidden { display: none; }
 ul, ol { padding-left: 16px; }
-li { margin: 4px; }
+li { margin: 8px; }
 footer {
     position: absolute; 
     bottom: 0; 

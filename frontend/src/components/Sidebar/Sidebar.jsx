@@ -10,6 +10,7 @@ import { useModal } from '../Dialog/ModalContext';
 const Sidebar = () => {
     const navigate = useNavigate();
     const [hidden, setHidden] = useState(true);
+    const [page, setPage] = useState(1);
     const handleClick = () => setHidden(!hidden);
     const [nickname, setNickname] = useState('');
     const [birthdate, setBirthdate] = useState('');
@@ -83,39 +84,45 @@ const Sidebar = () => {
             <div className="sidebar__content">
                 <div className='content-block'>
                     <h2>Профиль</h2>
-                    <input
-                        className="standard-border full-width"
-                        placeholder="Nickname"
-                        value={nickname}
-                        onChange={(e) => setNickname(e.target.value)}
-                    />
-                    <input
-                        type="date"
-                        className="standard-border full-width"
-                        placeholder="Birthdate"
-                        value={birthdate}
-                        onChange={(e) => setBirthdate(e.target.value)}
-                    />
-                    <input
-                        className="button button--to-go full-width"
-                        type="button"
-                        value="Сохранить"
-                        onClick={handleEdit}
-                    />
+                    <div className="hint-window">
+                        <input
+                            className="standard-border full-width"
+                            placeholder="Nickname"
+                            value={nickname}
+                            onChange={(e) => setNickname(e.target.value)}
+                        />
+                        <input
+                            type="date"
+                            className="standard-border full-width"
+                            placeholder="Birthdate"
+                            value={birthdate}
+                            onChange={(e) => setBirthdate(e.target.value)}
+                        />
+                        <input
+                            className="button button--to-go full-width"
+                            type="button"
+                            value="Сохранить"
+                            onClick={handleEdit}
+                        />
+                    </div>
                 </div>
                 <div className='content-block'>
-                    <h2>Гайд</h2>
-                    <h3>Организатор</h3>
-                    <ol>
-                        <li>Наведите красный маркер на нужное вам место</li>
-                        <li>Нажмите на него, чтобы открыть форму создания события</li>
-                        <li>Заполните форму и нажмите "Создать"</li>
-                    </ol>
-                    <h3>Участник</h3>
-                    <ol>
-                        <li>Чтобы забронировать место, нажмите на синий маркер и выберите "Я приду"</li>
-                        <li>Если передумали, нажмите на тот же маркер и выберите "Я не приду"</li>
-                    </ol>
+                    <h2>Справка</h2>
+                    <div style={{display: 'flex', gap: '8px'}}>
+                        <h4 className={`tab ${page === 1 ? 'tab__current' : ''}`} onClick={() => setPage(1)}>Организатор</h4>
+                        <h4 className={`tab ${page === 2 ? 'tab__current' : ''}`} onClick={() => setPage(2)}>Участник</h4>
+                    </div>
+                    <div className="hint-window">
+                        <ol className={`${page === 1 ? "" : "hidden"}`}>
+                            <li>Наведите красный маркер на нужное вам место</li>
+                            <li>Нажмите на него, чтобы открыть форму создания события</li>
+                            <li>Заполните форму и нажмите "Создать"</li>
+                        </ol>
+                        <ol className={`${page === 2 ? "" : "hidden"}`}>
+                            <li>Чтобы забронировать место, нажмите на синий маркер и выберите "Я приду"</li>
+                            <li>Если передумали, нажмите на тот же маркер и выберите "Я не приду"</li>
+                        </ol>
+                    </div>
                 </div>
                 <footer className='content-block'>
                     <p><a href={PRIVACY_LINK}>Политика и Правила сервиса</a></p>

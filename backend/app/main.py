@@ -1,12 +1,13 @@
 import asyncio
+from contextlib import asynccontextmanager
+
 import uvicorn
 from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
-from contextlib import asynccontextmanager
-from app.routes import user, event
+
+from app.models.database import async_session_maker, init_db
+from app.routes import booking, event, user
 from app.services.event import delete_expired_events
-from app.models.database import init_db, async_session_maker
-from app.routes import booking
 
 
 async def periodic_cleanup():
@@ -17,7 +18,7 @@ async def periodic_cleanup():
                 await session.commit()
         except Exception as e:
             print(f"Cleanup error: {e}")
-        
+
         await asyncio.sleep(6 * 60 * 60)
 
 
@@ -41,7 +42,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "https://localhost:5173",
-        "http://192.168.31.182:5173"
+        "http://192.168.31.182:5173",
     ],
     allow_credentials=True,
     allow_methods=["*"],

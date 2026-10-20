@@ -1,25 +1,23 @@
-import sqlalchemy as db
-from sqlalchemy import or_, and_
 from datetime import datetime
-from app.models.models import User, Event, Booking
+
+import sqlalchemy as db
 from app.models.database import AsyncSession
+from app.models.models import Booking, Event, User
 from app.schemas.event import EventPostRequest
 from app.utils.date_functions import calculate_age
+from sqlalchemy import and_, or_
 
 
 async def get_all_events(user_data: User, session: AsyncSession) -> list:
     user_age = calculate_age(user_data.birthdate)
     query_select = (
-        db.select(
-            Event, 
-            db.func.count(Booking.id).label("participants_count")
-        )
+        db.select(Event, db.func.count(Booking.id).label("participants_count"))
         .outerjoin(Booking)
         .where(
             and_(
                 Event.datetime >= datetime.now(),
                 or_(user_age >= Event.min_age, Event.min_age.is_(None)),
-                or_(user_age <= Event.max_age, Event.max_age.is_(None))
+                or_(user_age <= Event.max_age, Event.max_age.is_(None)),
             )
         )
         .group_by(Event.id)
@@ -42,7 +40,7 @@ async def add_new_event(data: EventPostRequest, session: AsyncSession) -> int:
         capacity=data.capacity,
         datetime=data.datetime.astimezone().replace(tzinfo=None),
         min_age=data.min_age,
-        max_age=data.max_age
+        max_age=data.max_age,
     )
     session.add(new_event)
     await session.commit()

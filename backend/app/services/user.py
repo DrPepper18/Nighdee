@@ -1,10 +1,10 @@
-from fastapi import HTTPException, status
 import sqlalchemy as db
-from sqlalchemy.exc import IntegrityError
-from app.models.models import User, Booking
 from app.models.database import AsyncSession
+from app.models.models import Booking, User
+from app.schemas.user import EditUserInfoRequest, LoginRequest, RegisterRequest
 from app.utils.security import create_password_hash, is_password_correct
-from app.schemas.user import RegisterRequest, LoginRequest, EditUserInfoRequest
+from fastapi import HTTPException, status
+from sqlalchemy.exc import IntegrityError
 
 
 async def register_user(data: RegisterRequest, session: AsyncSession) -> str:
@@ -14,7 +14,7 @@ async def register_user(data: RegisterRequest, session: AsyncSession) -> str:
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="User with this email is already exists"
+            detail="User with this email is already exists",
         )
 
     password_hash = create_password_hash(password=data.password)
@@ -22,19 +22,19 @@ async def register_user(data: RegisterRequest, session: AsyncSession) -> str:
         email=data.email,
         password_hash=password_hash,
         name=data.name,
-        birthdate=data.birthdate
+        birthdate=data.birthdate,
     )
     session.add(new_user)
 
     try:
         await session.commit()
-    except IntegrityError as e:
+    except IntegrityError:
         session.rollback()
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            detail="Internal Server Error"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Internal Server Error",
         )
-    
+
     return new_user.id
 
 
@@ -44,10 +44,7 @@ async def get_password_hash(email: str, session: AsyncSession) -> bytes:
     user_data = result.scalars().first()
 
     if not user_data:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
-            detail="Not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found")
 
     return user_data.password_hash
 
@@ -58,16 +55,15 @@ async def authenticate_user(data: LoginRequest, session: AsyncSession) -> str:
 
     if not success:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, 
-            detail="Invalid email or password"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password"
         )
-    
+
     query_select = db.select(User.id).where(User.email == data.email)
     result = await session.execute(query_select)
     user_id = result.scalar()
-    
+
     return user_id
-    
+
 
 async def get_user_info(user_id: int, session: AsyncSession) -> User:
     query_select = db.select(User).where(User.id == user_id)
@@ -76,14 +72,14 @@ async def get_user_info(user_id: int, session: AsyncSession) -> User:
     return user_data
 
 
-async def update_user_info(data: EditUserInfoRequest, user_id: int, session: AsyncSession) -> User:
+async def update_user_info(
+    data: EditUserInfoRequest, user_id: int, session: AsyncSession
+) -> User:
     query_select = (
         db.update(User)
         .where(User.id == user_id)
         .values(
-            name=data.name,
-            birthdate=data.birthdate,
-            is_introduced=data.is_introduced
+            name=data.name, birthdate=data.birthdate, is_introduced=data.is_introduced
         )
     )
     await session.execute(query_select)
@@ -91,14 +87,8 @@ async def update_user_info(data: EditUserInfoRequest, user_id: int, session: Asy
 
 
 async def delete_user(user_id: int, session: AsyncSession) -> None:
-    query_delete_bookings = (
-        db.delete(Booking)
-        .where(Booking.user_id == user_id)
-    )
-    query_delete_user = (
-        db.delete(User)
-        .where(User.id == user_id)
-    )
+    query_delete_bookings = db.delete(Booking).where(Booking.user_id == user_id)
+    query_delete_user = db.delete(User).where(User.id == user_id)
     await session.execute(query_delete_bookings)
     await session.execute(query_delete_user)
     await session.commit()

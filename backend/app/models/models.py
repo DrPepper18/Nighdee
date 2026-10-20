@@ -1,6 +1,5 @@
-from sqlalchemy.orm import declarative_base
 import sqlalchemy as sa
-
+from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 
@@ -12,7 +11,9 @@ class User(Base):
     password_hash = sa.Column(sa.LargeBinary())
     name = sa.Column(sa.String())
     birthdate = sa.Column(sa.Date())
-    is_introduced = sa.Column(sa.Boolean(), nullable=False, server_default=sa.text("false"))
+    is_introduced = sa.Column(
+        sa.Boolean(), nullable=False, server_default=sa.text("false")
+    )
 
 
 class Event(Base):
@@ -32,6 +33,4 @@ class Booking(Base):
     id = sa.Column(sa.BigInteger(), primary_key=True, autoincrement=True)
     event_id = sa.Column(sa.ForeignKey(Event.id))
     user_id = sa.Column(sa.ForeignKey(User.id))
-    __table_args__ = (
-        sa.UniqueConstraint(event_id, user_id, name='unique_record'),
-    )
+    __table_args__ = (sa.UniqueConstraint(event_id, user_id, name="unique_record"),)

@@ -1,34 +1,49 @@
-import pytest
-from httpx import AsyncClient
 from datetime import datetime, timedelta
+
+import pytest
 from app.utils.date_functions import calculate_birthdate
 from fastapi import status
+from httpx import AsyncClient
 
 
 @pytest.mark.asyncio
 async def test_full_cycle(client: AsyncClient):
     users = [
-        {"email": "owner@gmail.com", "password": "imaboss", "name": "Owner", "birthdate": calculate_birthdate(30).isoformat()},
-        {"email": "latebird@yandex.ru", "password": "ihavetime", "name": "Late bird", "birthdate": calculate_birthdate(20).isoformat()},
-        {"email": "naughtykid@mail.ru", "password": "im18iswear", "name": "Kid", "birthdate": calculate_birthdate(18).isoformat()},
+        {
+            "email": "owner@gmail.com",
+            "password": "imaboss",
+            "name": "Owner",
+            "birthdate": calculate_birthdate(30).isoformat(),
+        },
+        {
+            "email": "latebird@yandex.ru",
+            "password": "ihavetime",
+            "name": "Late bird",
+            "birthdate": calculate_birthdate(20).isoformat(),
+        },
+        {
+            "email": "naughtykid@mail.ru",
+            "password": "im18iswear",
+            "name": "Kid",
+            "birthdate": calculate_birthdate(18).isoformat(),
+        },
     ]
 
     tokens = []
-    
+
     for user in users:
         # Registration
-        response = await client.post('/api/auth/register', json=user)
+        response = await client.post("/api/auth/register", json=user)
         assert response.status_code == status.HTTP_201_CREATED
 
         # Login
-        response = await client.post('/api/auth/login', json={
-            "email": user["email"],
-            "password": user["password"]
-        })
+        response = await client.post(
+            "/api/auth/login",
+            json={"email": user["email"], "password": user["password"]},
+        )
         assert response.status_code == status.HTTP_200_OK
         token = response.json()["token"]
         tokens.append(token)
-    
 
     # Create an event
     event = {
@@ -38,21 +53,23 @@ async def test_full_cycle(client: AsyncClient):
         "datetime": (datetime.now() + timedelta(days=1)).isoformat(),
         "min_age": 19,
         "max_age": None,
-        "capacity": 1
+        "capacity": 1,
     }
-    response = await client.post('/api/event/',
-                                    headers={"Authorization": f"Bearer {tokens[0]}"}, 
-                                    json=event
+    response = await client.post(
+        "/api/event/", headers={"Authorization": f"Bearer {tokens[0]}"}, json=event
     )
     assert response.status_code == status.HTTP_201_CREATED
     event_id = response.json()["event_id"]
     assert event_id
-    
 
     # Join the event (failed: too young)
-    response = await client.post(f'/api/book/{event_id}', headers={"Authorization": f"Bearer {tokens[2]}"})
+    response = await client.post(
+        f"/api/book/{event_id}", headers={"Authorization": f"Bearer {tokens[2]}"}
+    )
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
     # Check participation (expect: false)
-    response = await client.get(f'/api/book/{event_id}', headers={"Authorization": f"Bearer {tokens[2]}"})
+    response = await client.get(
+        f"/api/book/{event_id}", headers={"Authorization": f"Bearer {tokens[2]}"}
+    )
     assert not response.json()["is_joined"]

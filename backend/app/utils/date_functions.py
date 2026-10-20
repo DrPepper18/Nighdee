@@ -1,5 +1,7 @@
 from datetime import date
+
 from dateutil.relativedelta import relativedelta
+
 
 def calculate_age(born: date) -> int:
     today = date.today()

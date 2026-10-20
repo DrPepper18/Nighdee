@@ -1,7 +1,4 @@
-from datetime import datetime
-from typing import Annotated
-from pydantic import BaseModel, AfterValidator, EmailStr, Field, model_validator
-from app.utils.date_functions import calculate_age
+from pydantic import BaseModel
 
 
 class BookingServiceResponse(BaseModel):

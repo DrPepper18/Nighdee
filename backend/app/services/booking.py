@@ -1,10 +1,10 @@
-from fastapi import HTTPException, status
 import sqlalchemy as db
-from app.models.models import Booking
 from app.models.database import AsyncSession
-from app.services.user import get_user_info
+from app.models.models import Booking
 from app.services.event import get_event_info
+from app.services.user import get_user_info
 from app.utils.date_functions import calculate_age
+from fastapi import HTTPException, status
 
 
 async def get_event_signups(id: int, session: AsyncSession) -> int:
@@ -16,8 +16,7 @@ async def get_event_signups(id: int, session: AsyncSession) -> int:
 
 async def get_join_status(event_id: int, user_id: int, session: AsyncSession) -> bool:
     query_select = db.select(Booking).where(
-        (Booking.event_id == event_id) & 
-        (Booking.user_id == user_id)
+        (Booking.event_id == event_id) & (Booking.user_id == user_id)
     )
     result = await session.execute(query_select)
     joined_data = result.scalars().first()
@@ -25,15 +24,14 @@ async def get_join_status(event_id: int, user_id: int, session: AsyncSession) ->
 
 
 async def register_join(event_id: str, user_id: int, session: AsyncSession) -> None:
-    new_record = Booking(
-        event_id=event_id,
-        user_id=user_id
-    )
+    new_record = Booking(event_id=event_id, user_id=user_id)
     session.add(new_record)
     await session.commit()
 
 
-async def join_user_to_event(event_id: int, user_id: int, session: AsyncSession) -> None:
+async def join_user_to_event(
+    event_id: int, user_id: int, session: AsyncSession
+) -> None:
     user = await get_user_info(user_id, session=session)
     event = await get_event_info(event_id, session=session)
     event_load = await get_event_signups(event_id, session=session)
@@ -41,27 +39,28 @@ async def join_user_to_event(event_id: int, user_id: int, session: AsyncSession)
 
     if not event:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
-            detail="Event is not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Event is not found"
         )
-    if not((not event.min_age or event.min_age <= user_age) and (not event.max_age or user_age <= event.max_age)):
+    if not (
+        (not event.min_age or event.min_age <= user_age)
+        and (not event.max_age or user_age <= event.max_age)
+    ):
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, 
-            detail="Age is not suitable"
+            status_code=status.HTTP_403_FORBIDDEN, detail="Age is not suitable"
         )
     if not (event.capacity > event_load):
         raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT, 
-            detail="No slots available"
+            status_code=status.HTTP_409_CONFLICT, detail="No slots available"
         )
 
     await register_join(event_id=event_id, user_id=user_id, session=session)
 
 
-async def cancel_join_to_event(event_id: int, user_id: int, session: AsyncSession) -> None:
+async def cancel_join_to_event(
+    event_id: int, user_id: int, session: AsyncSession
+) -> None:
     delete_record_query = db.delete(Booking).where(
-        (Booking.user_id == user_id) & 
-        (Booking.event_id == event_id)
+        (Booking.user_id == user_id) & (Booking.event_id == event_id)
     )
     await session.execute(delete_record_query)
     await session.commit()

@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import Annotated
-from pydantic import BaseModel, AfterValidator, EmailStr
-from app.utils.date_functions import calculate_age
 
+from app.utils.date_functions import calculate_age
+from pydantic import AfterValidator, BaseModel, EmailStr
 
 AGE_LIMIT = 18
 

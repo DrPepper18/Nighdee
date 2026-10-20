@@ -1,14 +1,14 @@
-import jwt
-import bcrypt
 import time
-from fastapi import HTTPException, Depends, Cookie, status
-from fastapi.security import OAuth2PasswordBearer
-from app.config import SECRET_TOKEN
 
+import bcrypt
+import jwt
+from app.config import SECRET_TOKEN
+from fastapi import Cookie, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 
 TOKEN_LIFESPAN = {
-    "refresh": 30 * 24 * 60 * 60, # 30 days
-    "access": 10 * 60 # 10 minutes
+    "refresh": 30 * 24 * 60 * 60,  # 30 days
+    "access": 10 * 60,  # 10 minutes
 }
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -18,29 +18,25 @@ def validate_token(token: str) -> dict:
         payload = jwt.decode(token, SECRET_TOKEN, algorithms=["HS256"])
         if not payload:
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, 
-                detail="Unauthorized"
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
             )
         return payload
     except jwt.ExpiredSignatureError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token expired"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired"
         )
     except jwt.InvalidTokenError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, 
-            detail="Invalid token"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
         )
 
 
 def verify_access_token(token: str = Depends(oauth2_scheme)) -> dict:
     payload = validate_token(token)
 
-    if payload["type"] != 'access':
+    if payload["type"] != "access":
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Access token required"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Access token required"
         )
 
     return payload
@@ -49,10 +45,9 @@ def verify_access_token(token: str = Depends(oauth2_scheme)) -> dict:
 def verify_refresh_token(token: str = Cookie(None, alias="refresh")) -> dict:
     payload = validate_token(token)
 
-    if payload["type"] != 'refresh':
+    if payload["type"] != "refresh":
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Refresh token required"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Refresh token required"
         )
 
     return payload
@@ -64,7 +59,7 @@ def create_jwt_token(user_id: int, token_type: str = "access") -> str:
         "sub": str(user_id),
         "type": token_type,
         "iat": int(time.time()),
-        "exp": int(time.time()) + TOKEN_LIFESPAN[token_type]
+        "exp": int(time.time()) + TOKEN_LIFESPAN[token_type],
     }
     token = jwt.encode(payload, SECRET_TOKEN, algorithm="HS256")
     return token
@@ -73,7 +68,7 @@ def create_jwt_token(user_id: int, token_type: str = "access") -> str:
 def create_both_tokens(user_id: int) -> dict:
     return {
         "refresh": create_jwt_token(user_id=user_id, token_type="refresh"),
-        "access": create_jwt_token(user_id=user_id, token_type="access")
+        "access": create_jwt_token(user_id=user_id, token_type="access"),
     }
 
 
